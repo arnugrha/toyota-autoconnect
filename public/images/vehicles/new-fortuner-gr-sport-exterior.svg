@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" width="900" height="560" fill="none">
+  <defs>
+    <linearGradient id="extBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0f1d"/>
+      <stop offset="50%" stop-color="#141c2e"/>
+      <stop offset="100%" stop-color="#0a0f1d"/>
+    </linearGradient>
+    <linearGradient id="carPaint" x1="0%" y1="0%" x2="100%" y2="40%">
+      <stop offset="0%" stop-color="#111827"/>
+      <stop offset="50%" stop-color="#475569"/>
+      <stop offset="100%" stop-color="#111827"/>
+    </linearGradient>
+    <radialGradient id="spotlight" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#EB0A1E" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="glassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#090d16"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Showroom Ambient -->
+  <rect width="900" height="560" fill="url(#extBg)"/>
+  <circle cx="450" cy="270" r="380" fill="url(#spotlight)"/>
+
+  <!-- Floor Grid & Stage Reflection -->
+  <ellipse cx="450" cy="460" rx="360" ry="18" fill="#000000" fill-opacity="0.7" filter="blur(8px)"/>
+  <line x1="80" y1="458" x2="820" y2="458" stroke="#334155" stroke-width="1.5" stroke-opacity="0.7"/>
+
+  <!-- Car Silhouette Group -->
+  <g transform="translate(140, 180)">
+    <!-- Cabin Windows -->
+    <path d="M 150 140 L 250 55 L 430 55 L 510 140 Z" fill="url(#glassGrad)" stroke="#64748b" stroke-width="2"/>
+    <line x1="330" y1="56" x2="330" y2="138" stroke="#334155" stroke-width="3"/>
+
+    <!-- Main Aerodynamic Body Silhouette -->
+    <path d="M 50 180 
+             C 55 155, 80 145, 120 140 
+             L 160 135 
+             L 255 50 
+             C 270 45, 300 45, 435 45 
+             L 515 135 
+             L 590 145 
+             C 625 150, 645 165, 635 185 
+             L 620 220 
+             C 600 225, 575 225, 550 225 
+             C 545 195, 505 170, 470 170 
+             C 435 170, 395 195, 390 225 
+             L 260 225 
+             C 255 195, 215 170, 180 170 
+             C 145 170, 105 195, 100 225 
+             L 55 225 
+             Z" fill="url(#carPaint)" stroke="#94a3b8" stroke-width="2.5"/>
+
+    <!-- Dynamic Character Line -->
+    <path d="M 130 152 Q 350 148 600 160" stroke="#EB0A1E" stroke-width="3.5" stroke-linecap="round"/>
+
+    <!-- Front LED Headlight glow -->
+    <path d="M 615 170 L 635 178 L 625 188 Z" fill="#38bdf8" filter="drop-shadow(0 0 10px #38bdf8)"/>
+    <!-- Rear Taillight signature -->
+    <path d="M 55 170 L 45 178 L 55 186 Z" fill="#ef4444" filter="drop-shadow(0 0 8px #ef4444)"/>
+
+    <!-- Front & Rear Alloy Wheels -->
+    <g transform="translate(180, 225)">
+      <circle cx="0" cy="0" r="46" fill="#090d16" stroke="#475569" stroke-width="6"/>
+      <circle cx="0" cy="0" r="30" fill="#1e293b" stroke="#cbd5e1" stroke-width="3.5"/>
+      <circle cx="0" cy="0" r="10" fill="#EB0A1E"/>
+      <line x1="0" y1="-28" x2="0" y2="28" stroke="#94a3b8" stroke-width="3"/>
+      <line x1="-28" y1="0" x2="28" y2="0" stroke="#94a3b8" stroke-width="3"/>
+      <line x1="-20" y1="-20" x2="20" y2="20" stroke="#94a3b8" stroke-width="2.5"/>
+      <line x1="20" y1="-20" x2="-20" y2="20" stroke="#94a3b8" stroke-width="2.5"/>
+    </g>
+
+    <g transform="translate(470, 225)">
+      <circle cx="0" cy="0" r="46" fill="#090d16" stroke="#475569" stroke-width="6"/>
+      <circle cx="0" cy="0" r="30" fill="#1e293b" stroke="#cbd5e1" stroke-width="3.5"/>
+      <circle cx="0" cy="0" r="10" fill="#EB0A1E"/>
+      <line x1="0" y1="-28" x2="0" y2="28" stroke="#94a3b8" stroke-width="3"/>
+      <line x1="-28" y1="0" x2="28" y2="0" stroke="#94a3b8" stroke-width="3"/>
+      <line x1="-20" y1="-20" x2="20" y2="20" stroke="#94a3b8" stroke-width="2.5"/>
+      <line x1="20" y1="-20" x2="-20" y2="20" stroke="#94a3b8" stroke-width="2.5"/>
+    </g>
+  </g>
+
+  <!-- Overlay Watermark & Category Tag -->
+  <rect x="40" y="40" width="380" height="70" rx="8" fill="#000000" fill-opacity="0.6" stroke="#334155" stroke-width="1"/>
+  <text x="60" y="68" font-family="system-ui, sans-serif" font-size="16" font-weight="700" fill="#f8fafc">New Fortuner GR Sport</text>
+  <text x="60" y="92" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#EB0A1E">SUV • 2.8 GR Sport 4x4 A/T</text>
+</svg>
