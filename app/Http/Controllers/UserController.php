@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\AuditTrailService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -121,7 +122,10 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:20'],
             'role' => ['required', 'string', Rule::exists('roles', 'name')],
+            'password' => ['nullable', 'string', Password::defaults(), 'confirmed'],
             'is_active' => ['boolean'],
+        ], [
+            'password.confirmed' => 'Konfirmasi reset kata sandi tidak cocok.',
         ]);
 
         // Safety check: Prevent currently authenticated Super Admin from deactivating themselves
@@ -138,15 +142,32 @@ class UserController extends Controller
             ]);
         }
 
-        $user->update([
+        $payload = [
             'name' => $validated['name'],
             'phone' => $validated['phone'] ?? null,
             'is_active' => $request->boolean('is_active', true),
-        ]);
+        ];
+
+        $passwordReset = false;
+        if (! empty($validated['password'])) {
+            $payload['password'] = Hash::make($validated['password']);
+            $passwordReset = true;
+        }
+
+        $user->update($payload);
+
+        if ($passwordReset) {
+            app(AuditTrailService::class)->logAuth('password_reset_by_admin', $user, true);
+        }
 
         $user->syncRoles([$validated['role']]);
 
+        $message = "Data pengguna {$user->name} berhasil diperbarui.";
+        if ($passwordReset) {
+            $message .= ' Kata sandi akun juga berhasil direset.';
+        }
+
         return redirect()->route('admin.users.index')
-            ->with('status', "Data pengguna {$user->name} berhasil diperbarui.");
+            ->with('status', $message);
     }
 }

@@ -62,7 +62,7 @@
                 <div class="lg:col-span-5 relative">
                     <div class="relative mx-auto overflow-hidden rounded-2xl border border-slate-800 bg-gradient-to-b from-slate-800/60 to-slate-900/90 p-3.5 shadow-xl backdrop-blur-sm">
                         <div class="relative aspect-video w-full overflow-hidden rounded-xl bg-slate-950">
-                            <img src="{{ asset('images/vehicles/all-new-kijang-innova-zenix-exterior.svg') }}" 
+                            <img src="{{ asset('images/vehicles/all-new-kijang-innova-zenix-exterior.jpg') }}" 
                                  alt="All New Kijang Innova Zenix Showroom Spotlight" 
                                  class="h-full w-full object-cover object-center transition duration-500 hover:scale-105"
                                  width="800"
@@ -373,8 +373,8 @@
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="text-xs sm:text-sm font-bold text-slate-900">Persiapan Menuju Layanan Terpadu</h3>
-                                <p class="text-[11px] text-slate-500 mt-0.5">Platform siap diintegrasikan dengan simulasi kredit, booking test drive, dan purnajual pada tahap berikutnya.</p>
+                                <h3 class="text-xs sm:text-sm font-bold text-slate-900">Layanan Digital Terpadu</h3>
+                                <p class="text-[11px] text-slate-500 mt-0.5">Nikmati kemudahan simulasi kredit multi-leasing resmi, pengajuan booking test drive, hingga pemesanan servis berkala secara langsung.</p>
                             </div>
                         </div>
                     </div>

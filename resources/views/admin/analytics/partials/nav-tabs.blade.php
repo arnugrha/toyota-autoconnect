@@ -1,4 +1,11 @@
 <div class="flex items-center gap-1.5 overflow-x-auto pb-2 mb-6 scrollbar-none text-xs font-bold border-b border-slate-200">
+    @if(auth()->user()->hasRole(['Super Admin', 'Dealer Manager', 'Owner']))
+        <a href="{{ route('admin.owner.revenue') }}"
+           class="px-3.5 py-2 rounded-xl transition whitespace-nowrap {{ request()->routeIs('admin.owner.revenue') ? 'bg-red-600 text-white shadow-xs' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50' }}">
+            💰 Monitoring Pendapatan
+        </a>
+    @endif
+
     <a href="{{ route('admin.analytics.dashboard') }}"
        class="px-3.5 py-2 rounded-xl transition whitespace-nowrap {{ request()->routeIs('admin.analytics.dashboard') ? 'bg-red-600 text-white shadow-xs' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50' }}">
         Ringkasan Eksekutif
@@ -14,7 +21,7 @@
         CRM &amp; Leads Funnel
     </a>
 
-    @if(auth()->user()->hasRole(['Super Admin', 'Dealer Manager']))
+    @if(auth()->user()->hasRole(['Super Admin', 'Dealer Manager', 'Owner']))
         <a href="{{ route('admin.analytics.dealers') }}"
            class="px-3.5 py-2 rounded-xl transition whitespace-nowrap {{ request()->routeIs('admin.analytics.dealers') ? 'bg-red-600 text-white shadow-xs' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50' }}">
             Komparasi Dealer

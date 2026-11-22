@@ -188,17 +188,17 @@ class Vehicle extends Model
                     ],
                     'incoming' => [
                         'label' => 'Segera Hadir',
-                        'class' => 'bg-sky-50 text-sky-700 ring-1 ring-sky-600/20',
-                        'dot' => 'bg-sky-500',
-                    ],
-                    'reserved' => [
-                        'label' => 'Terpesan',
                         'class' => 'bg-amber-50 text-amber-700 ring-1 ring-amber-600/20',
                         'dot' => 'bg-amber-500',
                     ],
+                    'reserved' => [
+                        'label' => 'Terpesan',
+                        'class' => 'bg-slate-100 text-slate-700 ring-1 ring-slate-400/20',
+                        'dot' => 'bg-slate-400',
+                    ],
                     'sold' => [
                         'label' => 'Terjual',
-                        'class' => 'bg-zinc-100 text-zinc-600 ring-1 ring-zinc-500/20',
+                        'class' => 'bg-zinc-100 text-zinc-500 ring-1 ring-zinc-400/20',
                         'dot' => 'bg-zinc-400',
                     ],
                     default => [

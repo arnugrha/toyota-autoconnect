@@ -34,8 +34,8 @@
             </div>
         </div>
 
-        <!-- Branch / Dealer Filter (Only for Super Admin or users without hardcoded branch) -->
-        @if(auth()->user()->hasRole('Super Admin') && isset($branches))
+        <!-- Branch / Dealer Filter (For Super Admin & Owner or users without hardcoded branch) -->
+        @if(auth()->user()->hasRole(['Super Admin', 'Owner']) && isset($branches))
             <div class="min-w-[180px] flex-1 sm:flex-initial">
                 <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Jaringan Cabang Dealer</label>
                 <select name="branch_id" onchange="this.form.submit()"

@@ -35,7 +35,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
                     </svg>
                     Filter &amp; Urutkan
-                    @if (request()->hasAny(['q', 'category', 'min_price', 'max_price', 'status', 'sort']))
+                    @if (request()->hasAny(['q', 'category', 'min_price', 'max_price', 'status', 'sort', 'branch_id']))
                         <span class="h-1.5 w-1.5 rounded-full bg-red-600"></span>
                     @endif
                 </button>
@@ -54,7 +54,7 @@
                 <div class="sticky top-24 rounded-xl border border-slate-200 bg-white p-5 shadow-xs">
                     <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
                         <h2 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Filter Pencarian</h2>
-                        @if (request()->hasAny(['q', 'category', 'min_price', 'max_price', 'status', 'sort']))
+                        @if (request()->hasAny(['q', 'category', 'min_price', 'max_price', 'status', 'sort', 'branch_id']))
                             <a href="{{ route('vehicles.index') }}" class="text-[11px] font-semibold text-red-600 hover:text-red-700">
                                 Reset
                             </a>
@@ -164,12 +164,18 @@
                             <p class="text-[10px] text-slate-400">Contoh: 300000000 untuk Rp 300 Juta</p>
                         </div>
 
-                        <!-- Apply Button -->
-                        <div class="pt-1">
+                        <!-- Apply & Reset Buttons -->
+                        <div class="pt-1 flex items-center gap-2">
                             <button type="submit" 
-                                    class="w-full rounded-lg bg-slate-900 py-2 text-xs font-semibold text-white shadow-xs transition hover:bg-red-600 focus:outline-none">
-                                Terapkan Filter
+                                    class="flex-1 rounded-lg bg-slate-900 py-2 text-xs font-bold text-white shadow-xs transition hover:bg-red-600 focus:outline-none">
+                                Terapkan
                             </button>
+                            @if (request()->hasAny(['q', 'category', 'min_price', 'max_price', 'status', 'sort', 'branch_id']))
+                                <a href="{{ route('vehicles.index') }}" 
+                                   class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition text-center">
+                                    Reset
+                                </a>
+                            @endif
                         </div>
                     </form>
                 </div>
@@ -179,7 +185,7 @@
             <div class="lg:col-span-3">
 
                 <!-- Active Filters Pills -->
-                @if (request()->hasAny(['q', 'category', 'min_price', 'max_price', 'status', 'sort']))
+                @if (request()->hasAny(['q', 'category', 'min_price', 'max_price', 'status', 'sort', 'branch_id']))
                     <div class="mb-5 flex flex-wrap items-center gap-1.5 rounded-lg bg-white p-2.5 border border-slate-200 text-xs">
                         <span class="font-bold text-slate-600 text-[11px]">Filter Aktif:</span>
                         
@@ -199,6 +205,17 @@
                             <span class="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-0.5 text-slate-700 text-[11px] font-medium">
                                 Status: {{ ucfirst($filters['status']) }}
                             </span>
+                        @endif
+
+                        @if (!empty($filters['branch_id']))
+                            @php
+                                $activeBranch = $branches->firstWhere('id', $filters['branch_id']);
+                            @endphp
+                            @if ($activeBranch)
+                                <span class="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-0.5 text-slate-700 text-[11px] font-medium">
+                                    Cabang: {{ $activeBranch->name }}
+                                </span>
+                            @endif
                         @endif
 
                         @if (!empty($filters['min_price']))
@@ -385,6 +402,18 @@
                                 </label>
                             @endforeach
                         </div>
+                    </div>
+
+                    <div>
+                        <label for="mobile-branch" class="block text-[11px] font-bold text-slate-700 mb-1">Cabang Dealer</label>
+                        <select id="mobile-branch" name="branch_id" class="w-full rounded-lg border border-slate-200 p-2 text-xs">
+                            <option value="">Semua Lokasi Cabang</option>
+                            @foreach ($branches as $branch)
+                                <option value="{{ $branch->id }}" {{ $filters['branch_id'] == $branch->id ? 'selected' : '' }}>
+                                    {{ $branch->name }} ({{ $branch->city }})
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
 
                     <div>

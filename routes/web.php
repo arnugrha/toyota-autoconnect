@@ -444,6 +444,11 @@ Route::middleware('auth')->group(function () {
             Route::post('/notifications/monitoring/{log}/resend', [AdminNotificationMonitoringController::class, 'resend'])->name('notifications.resend');
         });
 
+        // Owner Executive Revenue Monitoring Hub
+        Route::middleware('permission:analytics.view')->group(function () {
+            Route::get('/owner/revenue', [ExecutiveAnalyticsController::class, 'revenueMonitoring'])->name('owner.revenue');
+        });
+
         // Analytics & Business Intelligence Dashboard (Tahap 10)
         Route::middleware('permission:analytics.view')->prefix('analytics')->as('analytics.')->group(function () {
             Route::get('/dashboard', [ExecutiveAnalyticsController::class, 'dashboard'])->name('dashboard');

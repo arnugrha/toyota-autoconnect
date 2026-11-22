@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ServiceBooking;
 use App\Models\ServiceOrder;
+use App\Models\ServiceReminder;
 use App\Models\SupportTicket;
 use App\Models\User;
 use App\Models\Vehicle;
@@ -25,6 +26,11 @@ class DashboardController extends Controller
         // If a customer accesses staff dashboard URL directly, redirect them to customer portal
         if ($user->hasRole('Customer')) {
             return redirect()->route('customer.dashboard');
+        }
+
+        // If an Owner accesses staff dashboard, redirect directly to executive revenue monitoring
+        if ($user->hasRole('Owner')) {
+            return redirect()->route('admin.owner.revenue');
         }
 
         $totalVehicles = Vehicle::count();
@@ -68,7 +74,7 @@ class DashboardController extends Controller
 
         $featuredVehicles = Vehicle::published()->featured()->take(3)->get();
         $activeBookingsCount = ServiceBooking::where('user_id', $user->id)->whereIn('status', ['pending', 'confirmed'])->count();
-        $serviceRemindersCount = \App\Models\ServiceReminder::where('user_id', $user->id)->where('status', 'pending')->count();
+        $serviceRemindersCount = ServiceReminder::where('user_id', $user->id)->where('status', 'pending')->count();
         $openTicketsCount = SupportTicket::where('user_id', $user->id)->whereIn('status', ['open', 'in_progress', 'waiting_customer'])->count();
 
         return view('customer.dashboard', [

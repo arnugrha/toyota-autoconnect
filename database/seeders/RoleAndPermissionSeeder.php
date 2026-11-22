@@ -263,6 +263,18 @@ class RoleAndPermissionSeeder extends Seeder
                 'content.manage',
             ],
 
+            'Owner' => [
+                'dashboard.view',
+                'analytics.view',
+                'reports.view',
+                'payments.view',
+                'sales.view',
+                'vehicles.view',
+                'inventory.view',
+                'profile.view',
+                'profile.update',
+            ],
+
             'Customer' => [
                 'customer-portal.view',
                 'customer-profile.view',
@@ -319,6 +331,13 @@ class RoleAndPermissionSeeder extends Seeder
                 'phone' => '081290001006',
                 'password' => 'password123',
                 'role' => 'CRM Officer',
+            ],
+            [
+                'name' => 'Bambang Soediro (Owner / Komisaris)',
+                'email' => 'owner@toyota-autoconnect.id',
+                'phone' => '081290001007',
+                'password' => 'password123',
+                'role' => 'Owner',
             ],
             [
                 'name' => 'Ahmad Customer',

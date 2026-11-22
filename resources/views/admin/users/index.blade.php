@@ -119,7 +119,7 @@
                             </td>
                             <td class="py-3 px-4 whitespace-nowrap">
                                 @foreach ($u->roles as $role)
-                                    <span class="inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-bold {{ $role->name === 'Super Admin' ? 'bg-red-50 text-red-700 border border-red-200' : ($role->name === 'Customer' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'bg-slate-100 text-slate-700 border border-slate-200') }}">
+                                    <span class="inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-bold {{ $role->name === 'Owner' ? 'bg-amber-50 text-amber-800 border border-amber-300 font-extrabold' : ($role->name === 'Super Admin' ? 'bg-red-50 text-red-700 border border-red-200' : ($role->name === 'Customer' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'bg-slate-100 text-slate-700 border border-slate-200')) }}">
                                         {{ $role->name }}
                                     </span>
                                 @endforeach

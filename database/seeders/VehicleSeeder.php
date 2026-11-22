@@ -331,29 +331,38 @@ class VehicleSeeder extends Seeder
                 ]
             );
 
-            // Generate SVG files
-            $primaryFilename = "{$data['slug']}-exterior.svg";
-            $interiorFilename = "{$data['slug']}-cockpit.svg";
+            // Prefer real photographic images (.jpg) if available, otherwise fallback to generated SVG
+            $primaryFilename = File::exists($imageDir.'/'."{$data['slug']}-exterior.jpg")
+                ? "{$data['slug']}-exterior.jpg"
+                : "{$data['slug']}-exterior.svg";
 
-            $this->generateVehicleSvg(
-                filePath: $imageDir.'/'.$primaryFilename,
-                title: $data['name'],
-                variant: $data['variant'],
-                category: $data['category'],
-                bodyColor: $data['color'],
-                accentColor: $data['accent'],
-                viewType: 'exterior'
-            );
+            $interiorFilename = File::exists($imageDir.'/'."{$data['slug']}-cockpit.jpg")
+                ? "{$data['slug']}-cockpit.jpg"
+                : "{$data['slug']}-cockpit.svg";
 
-            $this->generateVehicleSvg(
-                filePath: $imageDir.'/'.$interiorFilename,
-                title: $data['name'],
-                variant: 'Interior Cockpit & Comfort',
-                category: $data['category'],
-                bodyColor: '#0f172a',
-                accentColor: $data['accent'],
-                viewType: 'interior'
-            );
+            if (! File::exists($imageDir.'/'.$primaryFilename)) {
+                $this->generateVehicleSvg(
+                    filePath: $imageDir.'/'.$primaryFilename,
+                    title: $data['name'],
+                    variant: $data['variant'],
+                    category: $data['category'],
+                    bodyColor: $data['color'],
+                    accentColor: $data['accent'],
+                    viewType: 'exterior'
+                );
+            }
+
+            if (! File::exists($imageDir.'/'.$interiorFilename)) {
+                $this->generateVehicleSvg(
+                    filePath: $imageDir.'/'.$interiorFilename,
+                    title: $data['name'],
+                    variant: 'Interior Cockpit & Comfort',
+                    category: $data['category'],
+                    bodyColor: '#0f172a',
+                    accentColor: $data['accent'],
+                    viewType: 'interior'
+                );
+            }
 
             // Attach images
             VehicleImage::updateOrCreate(

@@ -87,6 +87,7 @@ class AuditTrailService
             'login' => $success ? "Pengguna {$userName} berhasil masuk ke sistem." : "Percobaan login gagal untuk {$userName}. Alasan: {$reason}",
             'logout' => "Pengguna {$userName} keluar dari sistem.",
             'password_change' => "Pengguna {$userName} berhasil memperbarui kata sandi akun.",
+            'password_reset_by_admin' => "Administrator mereset kata sandi akun {$userName}.",
             default => "Aktivitas autentikasi: {$action}",
         };
 
@@ -110,7 +111,7 @@ class AuditTrailService
      */
     public function logSettings(string $group, array $oldValues, array $newValues, ?User $actor = null): AuditLog
     {
-        $desc = "Pembaruan pengaturan grup [{$group}] oleh " . ($actor ? $actor->name : 'Administrator');
+        $desc = "Pembaruan pengaturan grup [{$group}] oleh ".($actor ? $actor->name : 'Administrator');
 
         return $this->log(
             action: 'settings_updated',
@@ -195,7 +196,7 @@ class AuditTrailService
      */
     public function logStatusChanged(Model $model, string $module, string $oldStatus, string $newStatus, ?string $reason = null, ?User $actor = null): AuditLog
     {
-        $desc = "Perubahan status {$module} ID #{$model->getKey()} dari '{$oldStatus}' menjadi '{$newStatus}'." . ($reason ? " Alasan: {$reason}" : '');
+        $desc = "Perubahan status {$module} ID #{$model->getKey()} dari '{$oldStatus}' menjadi '{$newStatus}'.".($reason ? " Alasan: {$reason}" : '');
 
         return $this->log(
             action: 'status_changed',
@@ -238,4 +239,3 @@ class AuditTrailService
         return $clean;
     }
 }
-
