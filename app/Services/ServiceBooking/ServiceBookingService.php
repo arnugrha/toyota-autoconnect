@@ -40,7 +40,7 @@ class ServiceBookingService
         if (! $schedule || ! $schedule->is_operational) {
             return [
                 'available' => false,
-                'message' => 'Bengkel cabang ' . $branch->name . ' tidak beroperasi pada hari tersebut (' . $bookingDate->translatedFormat('l') . ').',
+                'message' => 'Bengkel cabang '.$branch->name.' tidak beroperasi pada hari tersebut ('.$bookingDate->translatedFormat('l').').',
                 'remaining_capacity' => 0,
             ];
         }
@@ -52,7 +52,7 @@ class ServiceBookingService
         if (! in_array($timeStr, $validSlots)) {
             return [
                 'available' => false,
-                'message' => 'Jam servis ' . $timeStr . ' berada di luar jam operasional bengkel.',
+                'message' => 'Jam servis '.$timeStr.' berada di luar jam operasional bengkel.',
                 'remaining_capacity' => 0,
             ];
         }
@@ -66,7 +66,7 @@ class ServiceBookingService
         if ($activeDailyCount >= $schedule->max_daily_capacity) {
             return [
                 'available' => false,
-                'message' => 'Kapasitas kuota servis harian bengkel untuk tanggal ' . $bookingDate->format('d M Y') . ' telah penuh.',
+                'message' => 'Kapasitas kuota servis harian bengkel untuk tanggal '.$bookingDate->format('d M Y').' telah penuh.',
                 'remaining_capacity' => 0,
             ];
         }
@@ -81,7 +81,7 @@ class ServiceBookingService
         if ($activeSlotCount >= $schedule->max_slot_capacity) {
             return [
                 'available' => false,
-                'message' => 'Slot waktu servis pukul ' . $timeStr . ' telah penuh dipesan oleh pelanggan lain.',
+                'message' => 'Slot waktu servis pukul '.$timeStr.' telah penuh dipesan oleh pelanggan lain.',
                 'remaining_capacity' => 0,
             ];
         }
@@ -241,15 +241,22 @@ class ServiceBookingService
                     'estimated_cost' => $booking->serviceType->estimated_cost ?? 0,
                 ]);
 
-                // Initial standard service item
-                if ($booking->serviceType && $booking->serviceType->estimated_cost > 0) {
+                // Initial standard service labor item
+                if ($booking->serviceType) {
+                    $laborCost = (float) ($booking->serviceType->estimated_cost ?? 0);
                     $serviceOrder->items()->create([
-                        'item_type' => 'service',
-                        'name' => 'Jasa ' . $booking->serviceType->name,
+                        'item_type' => 'labor',
+                        'service_type_id' => $booking->service_type_id,
+                        'name' => 'Biaya Jasa '.$booking->serviceType->name,
                         'quantity' => 1,
-                        'unit_price' => $booking->serviceType->estimated_cost,
-                        'subtotal' => $booking->serviceType->estimated_cost,
+                        'unit_price' => $laborCost,
+                        'subtotal' => $laborCost,
+                        'approval_status' => 'approved',
+                        'approved_at' => now(),
+                        'stock_deducted' => false,
                     ]);
+
+                    $serviceOrder->recalculateFinalCost();
                 }
 
                 $serviceOrder->recordLog(
@@ -274,7 +281,8 @@ class ServiceBookingService
                         metadata: ['booking_id' => $booking->id, 'order_id' => $serviceOrder->id]
                     );
                 }
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) {
+            }
 
             return $serviceOrder;
         });
@@ -319,7 +327,8 @@ class ServiceBookingService
                         branchId: $booking->branch_id
                     );
                 }
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) {
+            }
 
             return $booking;
         });
@@ -376,10 +385,10 @@ class ServiceBookingService
                         branchId: $booking->branch_id
                     );
                 }
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) {
+            }
 
             return $booking;
         });
     }
 }
-

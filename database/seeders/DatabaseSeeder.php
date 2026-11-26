@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             VehicleSeeder::class,
             LeasingProviderSeeder::class,
             ServiceManagementSeeder::class,
+            SparePartSeeder::class,
             MasterDataAndSettingsSeeder::class,
         ]);
     }

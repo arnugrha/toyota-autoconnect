@@ -6,6 +6,7 @@ use App\Http\Requests\StoreServiceBookingRequest;
 use App\Models\Branch;
 use App\Models\ServiceBooking;
 use App\Models\ServiceType;
+use App\Models\User;
 use App\Models\Vehicle;
 use App\Models\VehicleBooking;
 use App\Services\ServiceBooking\ServiceBookingService;
@@ -30,10 +31,10 @@ class CustomerServiceBookingController extends Controller
     {
         Gate::authorize('viewAny', ServiceBooking::class);
 
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
-        $query = ServiceBooking::with(['branch', 'serviceType', 'vehicle', 'serviceOrder'])
+        $query = ServiceBooking::with(['branch', 'serviceType', 'vehicle', 'serviceOrder.items'])
             ->where('user_id', $user->id)
             ->latest('booking_date');
 
@@ -56,7 +57,7 @@ class CustomerServiceBookingController extends Controller
     {
         Gate::authorize('create', ServiceBooking::class);
 
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         $branches = Branch::where('is_active', true)->orderBy('name')->get();
@@ -107,7 +108,7 @@ class CustomerServiceBookingController extends Controller
     {
         Gate::authorize('create', ServiceBooking::class);
 
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         try {
@@ -127,7 +128,7 @@ class CustomerServiceBookingController extends Controller
     {
         Gate::authorize('view', $booking);
 
-        $booking->load(['branch', 'serviceType', 'vehicle', 'serviceOrder.items', 'serviceOrder.logs.user']);
+        $booking->load(['branch', 'serviceType', 'vehicle', 'serviceOrder.items.sparePart', 'serviceOrder.items.serviceType', 'serviceOrder.logs.user']);
 
         return view('customer.service-bookings.show', [
             'booking' => $booking,
@@ -145,7 +146,7 @@ class CustomerServiceBookingController extends Controller
             'cancellation_reason' => ['required', 'string', 'max:500'],
         ]);
 
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         try {

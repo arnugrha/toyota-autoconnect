@@ -13,6 +13,7 @@ class ServiceOrder extends Model
 
     protected $fillable = [
         'order_number',
+        'invoice_number',
         'service_booking_id',
         'user_id',
         'branch_id',
@@ -28,11 +29,16 @@ class ServiceOrder extends Model
         'inspection_result',
         'repair_actions',
         'estimated_cost',
+        'labor_cost',
+        'parts_cost',
         'final_cost',
+        'payment_status',
+        'paid_at',
         'additional_notes',
         'received_at',
         'completed_at',
         'delivered_at',
+        'invoice_issued_at',
     ];
 
     protected function casts(): array
@@ -40,16 +46,20 @@ class ServiceOrder extends Model
         return [
             'current_mileage' => 'integer',
             'estimated_cost' => 'decimal:2',
+            'labor_cost' => 'decimal:2',
+            'parts_cost' => 'decimal:2',
             'final_cost' => 'decimal:2',
+            'paid_at' => 'datetime',
             'received_at' => 'datetime',
             'completed_at' => 'datetime',
             'delivered_at' => 'datetime',
+            'invoice_issued_at' => 'datetime',
         ];
     }
 
     public static function generateNumber(): string
     {
-        $prefix = 'WO-' . date('Ym') . '-';
+        $prefix = 'WO-'.date('Ym').'-';
         $latest = static::where('order_number', 'like', "{$prefix}%")
             ->orderByDesc('id')
             ->first();
@@ -60,7 +70,44 @@ class ServiceOrder extends Model
             $number = ((int) end($parts)) + 1;
         }
 
-        return $prefix . str_pad((string) $number, 4, '0', STR_PAD_LEFT);
+        return $prefix.str_pad((string) $number, 4, '0', STR_PAD_LEFT);
+    }
+
+    public static function generateInvoiceNumber(): string
+    {
+        $prefix = 'INV-SRV-'.date('Ym').'-';
+        $latest = static::where('invoice_number', 'like', "{$prefix}%")
+            ->orderByDesc('id')
+            ->first();
+
+        $number = 1;
+        if ($latest && $latest->invoice_number) {
+            $parts = explode('-', $latest->invoice_number);
+            $number = ((int) end($parts)) + 1;
+        }
+
+        return $prefix.str_pad((string) $number, 4, '0', STR_PAD_LEFT);
+    }
+
+    public function isPaid(): bool
+    {
+        return $this->payment_status === 'paid';
+    }
+
+    public function getPaymentStatusLabelAttribute(): string
+    {
+        return match ($this->payment_status) {
+            'paid' => 'Lunas',
+            default => 'Menunggu Pembayaran',
+        };
+    }
+
+    public function getPaymentBadgeClassAttribute(): string
+    {
+        return match ($this->payment_status) {
+            'paid' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+            default => 'bg-amber-50 text-amber-700 border-amber-200',
+        };
     }
 
     public function serviceBooking(): BelongsTo
@@ -116,8 +163,31 @@ class ServiceOrder extends Model
 
     public function recalculateFinalCost(): void
     {
-        $total = $this->items()->sum('subtotal');
-        $this->update(['final_cost' => $total]);
+        $laborCost = (float) $this->items()
+            ->whereIn('item_type', ['labor', 'service'])
+            ->where('approval_status', 'approved')
+            ->sum('subtotal');
+
+        $partsCost = (float) $this->items()
+            ->where('item_type', 'part')
+            ->where('approval_status', 'approved')
+            ->sum('subtotal');
+
+        $this->update([
+            'labor_cost' => $laborCost,
+            'parts_cost' => $partsCost,
+            'final_cost' => $laborCost + $partsCost,
+        ]);
+    }
+
+    public function getFormattedLaborCostAttribute(): string
+    {
+        return 'Rp '.number_format((float) $this->labor_cost, 0, ',', '.');
+    }
+
+    public function getFormattedPartsCostAttribute(): string
+    {
+        return 'Rp '.number_format((float) $this->parts_cost, 0, ',', '.');
     }
 
     public function getStatusLabelAttribute(): string
@@ -159,14 +229,13 @@ class ServiceOrder extends Model
 
     public function getFormattedEstimatedCostAttribute(): string
     {
-        return 'Rp ' . number_format((float) $this->estimated_cost, 0, ',', '.');
+        return 'Rp '.number_format((float) $this->estimated_cost, 0, ',', '.');
     }
 
     public function getFormattedFinalCostAttribute(): string
     {
         return $this->final_cost !== null
-            ? 'Rp ' . number_format((float) $this->final_cost, 0, ',', '.')
+            ? 'Rp '.number_format((float) $this->final_cost, 0, ',', '.')
             : '-';
     }
 }
-

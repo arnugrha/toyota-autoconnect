@@ -57,22 +57,23 @@
                 <table class="w-full text-left text-xs text-slate-700 min-w-[1000px]">
                     <thead class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-600">
                         <tr>
-                            <th class="px-5 py-3.5 whitespace-nowrap min-w-[140px]">No. Work Order</th>
-                            <th class="px-5 py-3.5 whitespace-nowrap min-w-[150px]">Tanggal Selesai</th>
+                            <th class="px-5 py-3.5 whitespace-nowrap min-w-[160px]">No. Invoice &amp; WO</th>
+                            <th class="px-5 py-3.5 whitespace-nowrap min-w-[140px]">Tanggal Selesai</th>
                             <th class="px-5 py-3.5 whitespace-nowrap min-w-[180px]">Kendaraan &amp; Plat</th>
-                            <th class="px-5 py-3.5 whitespace-nowrap min-w-[180px]">Layanan Servis</th>
-                            <th class="px-5 py-3.5 whitespace-nowrap min-w-[160px]">Cabang Bengkel</th>
-                            <th class="px-5 py-3.5 whitespace-nowrap text-right min-w-[130px]">Biaya Akhir</th>
-                            <th class="px-5 py-3.5 whitespace-nowrap text-right min-w-[110px]">Aksi</th>
+                            <th class="px-5 py-3.5 whitespace-nowrap min-w-[170px]">Layanan Servis</th>
+                            <th class="px-5 py-3.5 whitespace-nowrap min-w-[150px]">Cabang Bengkel</th>
+                            <th class="px-5 py-3.5 whitespace-nowrap text-right min-w-[150px]">Rincian &amp; Total</th>
+                            <th class="px-5 py-3.5 whitespace-nowrap text-right min-w-[120px]">Invoice</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         @forelse($orders as $order)
                             <tr class="hover:bg-slate-50/60 transition">
-                                <td class="px-5 py-4 font-mono font-bold text-slate-900 whitespace-nowrap">
-                                    {{ $order->order_number }}
-                                    <span class="block font-sans text-[10px] font-bold text-emerald-600 mt-0.5">
-                                        {{ $order->status_label }}
+                                <td class="px-5 py-4 whitespace-nowrap">
+                                    <span class="font-mono font-extrabold text-slate-900 block">{{ $order->invoice_number ?? $order->order_number }}</span>
+                                    <span class="font-mono text-[10px] text-slate-400 block">WO: {{ $order->order_number }}</span>
+                                    <span class="mt-1 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold border {{ $order->payment_badge_class }}">
+                                        {{ $order->payment_status_label }}
                                     </span>
                                 </td>
                                 <td class="px-5 py-4 whitespace-nowrap">
@@ -105,15 +106,18 @@
                                     <span class="text-[10px] text-slate-400 block">{{ $order->branch?->city }}</span>
                                 </td>
                                 <td class="px-5 py-4 text-right whitespace-nowrap">
-                                    <span class="font-bold text-slate-900 font-mono text-sm block">
+                                    <span class="font-extrabold text-slate-900 font-mono text-sm block">
                                         {{ $order->formatted_final_cost }}
+                                    </span>
+                                    <span class="text-[10px] text-slate-500 block mt-0.5">
+                                        Jasa: {{ $order->formatted_labor_cost }} &bull; Part: {{ $order->formatted_parts_cost }}
                                     </span>
                                 </td>
                                 <td class="px-5 py-4 text-right whitespace-nowrap">
                                     <a href="{{ route('customer.service-histories.show', $order) }}"
-                                       class="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-[11px] font-bold text-slate-700 hover:bg-slate-50 hover:text-red-600 transition shadow-2xs">
-                                        Faktur Servis
-                                        <svg class="h-3 w-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                                       class="inline-flex items-center gap-1 rounded-lg bg-slate-900 px-3 py-1.5 text-[11px] font-bold text-white hover:bg-red-600 transition shadow-2xs">
+                                        Lihat Invoice
+                                        <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                                         </svg>
                                     </a>

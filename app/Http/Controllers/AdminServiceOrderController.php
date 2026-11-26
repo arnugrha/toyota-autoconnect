@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Branch;
 use App\Models\ServiceOrder;
 use App\Models\ServiceOrderItem;
+use App\Models\ServiceType;
+use App\Models\SparePart;
+use App\Models\User;
 use App\Services\ServiceOrder\ServiceOrderService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -26,7 +29,7 @@ class AdminServiceOrderController extends Controller
     {
         Gate::authorize('viewAny', ServiceOrder::class);
 
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         $baseQuery = ServiceOrder::query();
@@ -99,12 +102,23 @@ class AdminServiceOrderController extends Controller
             'vehicle',
             'serviceAdvisor',
             'serviceBooking',
-            'items',
+            'items.sparePart',
+            'items.serviceType',
             'logs.user',
         ]);
 
+        $spareParts = SparePart::active()
+            ->orderBy('name')
+            ->get(['id', 'part_number', 'name', 'unit', 'selling_price', 'stock_quantity']);
+
+        $serviceTypes = ServiceType::active()
+            ->orderBy('name')
+            ->get(['id', 'code', 'name', 'estimated_cost']);
+
         return view('admin.service-orders.show', [
             'order' => $serviceOrder,
+            'spareParts' => $spareParts,
+            'serviceTypes' => $serviceTypes,
         ]);
     }
 
@@ -120,7 +134,7 @@ class AdminServiceOrderController extends Controller
             'notes' => ['nullable', 'string', 'max:500'],
         ]);
 
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         try {
@@ -152,7 +166,7 @@ class AdminServiceOrderController extends Controller
             'current_mileage' => ['nullable', 'integer', 'min:0'],
         ]);
 
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         $this->serviceOrderService->recordInspection($serviceOrder, $validated, $user);
@@ -162,7 +176,7 @@ class AdminServiceOrderController extends Controller
     }
 
     /**
-     * Add spare part or labor item to work order.
+     * Add spare part or labor item to work order strictly from master dropdown.
      */
     public function addItem(Request $request, ServiceOrder $serviceOrder): RedirectResponse
     {
@@ -170,15 +184,35 @@ class AdminServiceOrderController extends Controller
 
         $validated = $request->validate([
             'item_type' => ['required', 'in:part,labor'],
-            'name' => ['required', 'string', 'max:255'],
-            'quantity' => ['required', 'integer', 'min:1'],
-            'unit_price' => ['required', 'numeric', 'min:0'],
+            'spare_part_id' => ['required_if:item_type,part', 'nullable', 'exists:spare_parts,id'],
+            'service_type_id' => ['required_if:item_type,labor', 'nullable', 'exists:service_types,id'],
+            'quantity' => ['required', 'integer', 'min:1', 'max:1000'],
+            'unit_price' => ['nullable', 'numeric', 'min:0'],
+            'requires_approval' => ['boolean'],
+        ], [
+            'spare_part_id.required_if' => 'Silakan pilih suku cadang dari dropdown master sparepart.',
+            'service_type_id.required_if' => 'Silakan pilih pekerjaan jasa dari dropdown master layanan.',
         ]);
 
-        $this->serviceOrderService->addItem($serviceOrder, $validated);
+        $validated['requires_approval'] = $validated['item_type'] === 'part'
+            ? $request->boolean('requires_approval', true)
+            : false;
 
-        return redirect()->route('admin.service-orders.show', $serviceOrder)
-            ->with('success', 'Item suku cadang / jasa servis berhasil ditambahkan.');
+        /** @var User $actor */
+        $actor = Auth::user();
+
+        try {
+            $item = $this->serviceOrderService->addItem($serviceOrder, $validated, $actor);
+
+            $message = $item->isPendingApproval()
+                ? "Tambahan suku cadang '{$item->name}' berhasil ditambahkan dan sedang menunggu konfirmasi dari pelanggan."
+                : "Item '{$item->name}' berhasil ditambahkan ke rincian Work Order.";
+
+            return redirect()->route('admin.service-orders.show', $serviceOrder)
+                ->with('success', $message);
+        } catch (InvalidArgumentException $e) {
+            return back()->with('error', $e->getMessage());
+        }
     }
 
     /**
@@ -192,10 +226,28 @@ class AdminServiceOrderController extends Controller
             abort(404);
         }
 
-        $this->serviceOrderService->removeItem($serviceOrder, $item);
+        /** @var User $actor */
+        $actor = Auth::user();
+
+        $this->serviceOrderService->removeItem($serviceOrder, $item, $actor);
 
         return redirect()->route('admin.service-orders.show', $serviceOrder)
             ->with('success', 'Item berhasil dihapus dari Service Order.');
     }
-}
 
+    /**
+     * Mark the service order invoice as paid.
+     */
+    public function markPaid(ServiceOrder $serviceOrder): RedirectResponse
+    {
+        Gate::authorize('manage', $serviceOrder);
+
+        /** @var User $actor */
+        $actor = Auth::user();
+
+        $order = $this->serviceOrderService->markAsPaid($serviceOrder, $actor);
+
+        return redirect()->route('admin.service-orders.show', $order)
+            ->with('success', "Invoice servis {$order->invoice_number} berhasil ditandai LUNAS.");
+    }
+}

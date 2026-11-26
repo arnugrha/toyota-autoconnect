@@ -211,33 +211,51 @@
                 </div>
 
                 <div class="overflow-x-auto border border-slate-200 rounded-xl">
-                    <table class="w-full text-left text-xs min-w-[750px]">
+                    <table class="w-full text-left text-xs min-w-[820px]">
                         <thead class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-600">
                             <tr>
-                                <th class="px-4 py-3 whitespace-nowrap min-w-[50px]">No</th>
-                                <th class="px-4 py-3 whitespace-nowrap min-w-[100px]">Tipe</th>
-                                <th class="px-4 py-3 whitespace-nowrap min-w-[240px]">Deskripsi Suku Cadang / Jasa</th>
-                                <th class="px-4 py-3 text-center whitespace-nowrap min-w-[70px]">Qty</th>
-                                <th class="px-4 py-3 text-right whitespace-nowrap min-w-[120px]">Harga Satuan</th>
-                                <th class="px-4 py-3 text-right whitespace-nowrap min-w-[120px]">Subtotal</th>
-                                <th class="px-4 py-3 text-center whitespace-nowrap min-w-[70px]">Hapus</th>
+                                <th class="px-4 py-3 whitespace-nowrap min-w-[45px]">No</th>
+                                <th class="px-4 py-3 whitespace-nowrap min-w-[95px]">Tipe</th>
+                                <th class="px-4 py-3 whitespace-nowrap min-w-[230px]">Deskripsi Suku Cadang / Jasa</th>
+                                <th class="px-4 py-3 text-center whitespace-nowrap min-w-[130px]">Konfirmasi User</th>
+                                <th class="px-4 py-3 text-center whitespace-nowrap min-w-[65px]">Qty</th>
+                                <th class="px-4 py-3 text-right whitespace-nowrap min-w-[115px]">Harga Satuan</th>
+                                <th class="px-4 py-3 text-right whitespace-nowrap min-w-[115px]">Subtotal</th>
+                                <th class="px-4 py-3 text-center whitespace-nowrap min-w-[65px]">Hapus</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
                             @forelse($order->items as $idx => $item)
-                                <tr class="hover:bg-slate-50/50">
+                                <tr class="hover:bg-slate-50/50 {{ $item->isRejected() ? 'bg-rose-50/30 opacity-75' : '' }}">
                                     <td class="px-4 py-3 text-slate-400 font-mono whitespace-nowrap">{{ $idx + 1 }}</td>
                                     <td class="px-4 py-3 whitespace-nowrap">
-                                        <span class="inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-bold {{ $item->item_type === 'labor' ? 'bg-sky-50 text-sky-700 border border-sky-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200' }}">
+                                        <span class="inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-bold {{ in_array($item->item_type, ['labor', 'service']) ? 'bg-sky-50 text-sky-700 border border-sky-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200' }}">
                                             {{ $item->item_type_label }}
                                         </span>
                                     </td>
-                                    <td class="px-4 py-3 font-semibold text-slate-900 whitespace-nowrap">{{ $item->name }}</td>
+                                    <td class="px-4 py-3">
+                                        <div class="font-semibold text-slate-900 {{ $item->isRejected() ? 'line-through text-slate-500' : '' }}">{{ $item->name }}</div>
+                                        @if($item->sparePart)
+                                            <span class="font-mono text-[10px] font-bold text-slate-500">SKU: {{ $item->sparePart->part_number }}</span>
+                                        @elseif($item->serviceType)
+                                            <span class="font-mono text-[10px] font-bold text-slate-500">Kode: {{ $item->serviceType->code }}</span>
+                                        @endif
+                                        @if($item->customer_response_note)
+                                            <p class="text-[10px] text-rose-600 italic mt-0.5">Catatan pelanggan: "{{ $item->customer_response_note }}"</p>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-3 text-center whitespace-nowrap">
+                                        <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold border {{ $item->approval_badge_class }}">
+                                            {{ $item->approval_status_label }}
+                                        </span>
+                                    </td>
                                     <td class="px-4 py-3 text-center font-bold text-slate-800 whitespace-nowrap">{{ $item->quantity }}</td>
                                     <td class="px-4 py-3 text-right font-mono text-slate-700 whitespace-nowrap">{{ $item->formatted_unit_price }}</td>
-                                    <td class="px-4 py-3 text-right font-mono font-bold text-slate-900 whitespace-nowrap">{{ $item->formatted_subtotal }}</td>
+                                    <td class="px-4 py-3 text-right font-mono font-bold whitespace-nowrap {{ $item->isRejected() ? 'line-through text-slate-400' : ($item->isPendingApproval() ? 'text-amber-700' : 'text-slate-900') }}">
+                                        {{ $item->formatted_subtotal }}
+                                    </td>
                                     <td class="px-4 py-3 text-center whitespace-nowrap">
-                                        <form action="{{ route('admin.service-orders.items.destroy', [$order, $item]) }}" method="POST" onsubmit="return confirm('Hapus item ini?')">
+                                        <form action="{{ route('admin.service-orders.items.destroy', [$order, $item]) }}" method="POST" onsubmit="return confirm('Hapus item ini? Jika stok sudah terpotong, stok akan dikembalikan otomatis ke gudang.')">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="text-rose-500 hover:text-rose-700 p-1">
@@ -250,16 +268,26 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="px-4 py-6 text-center text-slate-400 text-xs">
+                                    <td colspan="8" class="px-4 py-6 text-center text-slate-400 text-xs">
                                         Belum ada suku cadang atau jasa yang ditambahkan pada Work Order ini.
                                     </td>
                                 </tr>
                             @endforelse
                         </tbody>
-                        <tfoot class="bg-slate-50 border-t-2 border-slate-200 font-bold">
+                        <tfoot class="bg-slate-50 border-t-2 border-slate-200 font-bold text-xs">
+                            <tr class="border-b border-slate-200/70">
+                                <td colspan="6" class="px-4 py-2 text-right text-slate-600 font-semibold">Subtotal Biaya Jasa:</td>
+                                <td class="px-4 py-2 text-right font-mono text-slate-800">{{ $order->formatted_labor_cost }}</td>
+                                <td></td>
+                            </tr>
+                            <tr class="border-b border-slate-200/70">
+                                <td colspan="6" class="px-4 py-2 text-right text-slate-600 font-semibold">Subtotal Suku Cadang (Disetujui):</td>
+                                <td class="px-4 py-2 text-right font-mono text-slate-800">{{ $order->formatted_parts_cost }}</td>
+                                <td></td>
+                            </tr>
                             <tr>
-                                <td colspan="5" class="px-4 py-3.5 text-right text-xs uppercase tracking-wider text-slate-800">
-                                    Total Biaya Servis:
+                                <td colspan="6" class="px-4 py-3.5 text-right uppercase tracking-wider text-slate-900">
+                                    Total Biaya Servis Disetujui:
                                 </td>
                                 <td class="px-4 py-3.5 text-right font-mono text-base text-red-600">
                                     {{ $order->formatted_final_cost }}
@@ -336,6 +364,54 @@
                             Lihat Dokumen Booking Induk &rarr;
                         </a>
                     </div>
+                @endif
+            </div>
+
+            <!-- Sidebar Card: Invoice & Pembayaran Servis -->
+            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-2xs space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                    <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Invoice &amp; Pembayaran</h3>
+                    <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold border {{ $order->payment_badge_class }}">
+                        {{ $order->payment_status_label }}
+                    </span>
+                </div>
+
+                <div class="space-y-2.5 text-xs">
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500">Nomor Invoice:</span>
+                        <span class="font-mono font-bold text-slate-900">{{ $order->invoice_number ?? 'Terbit saat selesai' }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500">Biaya Jasa Servis:</span>
+                        <span class="font-mono font-semibold text-slate-800">{{ $order->formatted_labor_cost }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500">Suku Cadang Disetujui:</span>
+                        <span class="font-mono font-semibold text-slate-800">{{ $order->formatted_parts_cost }}</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                        <span class="font-bold text-slate-900">Grand Total Invoice:</span>
+                        <span class="font-mono font-black text-sm text-red-600">{{ $order->formatted_final_cost }}</span>
+                    </div>
+                    @if($order->paid_at)
+                        <p class="text-[10px] text-emerald-700 font-semibold pt-1">
+                            Dibayar lunas pada {{ $order->paid_at->format('d/m/Y H:i') }} WIB
+                        </p>
+                    @endif
+                </div>
+
+                @if(! $order->isPaid() && in_array($order->status, ['completed', 'delivered']))
+                    <form method="POST" action="{{ route('admin.service-orders.mark-paid', $order) }}"
+                          onsubmit="return confirm('Tandai invoice servis ini sudah dibayar LUNAS oleh pelanggan?')">
+                        @csrf
+                        <button type="submit"
+                                class="w-full inline-flex items-center justify-center gap-1.5 rounded-xl bg-emerald-600 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-emerald-700 transition">
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                            </svg>
+                            Tandai Invoice Lunas
+                        </button>
+                    </form>
                 @endif
             </div>
         </div>
@@ -455,11 +531,19 @@
         </div>
     </div>
 
-    <!-- Modal Tambah Suku Cadang / Jasa -->
+    <!-- Modal Tambah Suku Cadang / Jasa (Strict Master Dropdown) -->
     <div x-show="showAddItemModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs">
-        <div @click.away="showAddItemModal = false" class="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl border border-slate-200 space-y-4">
+        <div @click.away="showAddItemModal = false"
+             x-data="workOrderItemModal({
+                 spareParts: {{ $spareParts->keyBy('id')->toJson() }},
+                 serviceTypes: {{ $serviceTypes->keyBy('id')->toJson() }}
+             })"
+             class="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl border border-slate-200 space-y-4">
             <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                <h3 class="text-sm font-bold text-slate-900">Tambah Suku Cadang / Jasa Servis</h3>
+                <div>
+                    <h3 class="text-sm font-bold text-slate-900">Tambah Suku Cadang / Jasa Servis</h3>
+                    <p class="text-[11px] text-slate-500 mt-0.5">Pilih langsung dari katalog master sparepart atau jasa resmi bengkel.</p>
+                </div>
                 <button type="button" @click="showAddItemModal = false" class="text-slate-400 hover:text-slate-600">
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -472,19 +556,54 @@
 
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Jenis Item <span class="text-red-600">*</span></label>
-                    <select name="item_type" required class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs font-semibold text-slate-800 focus:border-red-600 focus:ring-1 focus:ring-red-600 focus:outline-none">
+                    <select name="item_type"
+                            x-model="itemType"
+                            @change="onTypeChange()"
+                            required
+                            class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs font-semibold text-slate-800 focus:border-red-600 focus:ring-1 focus:ring-red-600 focus:outline-none">
                         <option value="part">Suku Cadang (Toyota Genuine Parts)</option>
                         <option value="labor">Jasa / Biaya Pengerjaan Teknisi</option>
                     </select>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Nama Suku Cadang / Pekerjaan Jasa <span class="text-red-600">*</span></label>
-                    <input type="text"
-                           name="name"
-                           required
-                           placeholder="Contoh: Toyota Motor Oil (TMO) 5W-30 4L"
-                           class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs font-semibold text-slate-800 focus:border-red-600 focus:ring-1 focus:ring-red-600 focus:outline-none">
+                <!-- Dropdown Sparepart (ketika item_type === 'part') -->
+                <div x-show="itemType === 'part'">
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Pilih Suku Cadang (Master Sparepart) <span class="text-red-600">*</span></label>
+                    <select name="spare_part_id"
+                            x-model="sparePartId"
+                            @change="onSelectSparePart()"
+                            :required="itemType === 'part'"
+                            class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs font-semibold text-slate-800 focus:border-red-600 focus:ring-1 focus:ring-red-600 focus:outline-none">
+                        <option value="">-- Pilih Sparepart dari Gudang --</option>
+                        @foreach($spareParts as $sp)
+                            <option value="{{ $sp->id }}" {{ $sp->stock_quantity <= 0 ? 'disabled' : '' }}>
+                                [{{ $sp->part_number }}] {{ $sp->name }} — Stok: {{ $sp->stock_quantity }} {{ $sp->unit }} (Rp {{ number_format($sp->selling_price, 0, ',', '.') }}){{ $sp->stock_quantity <= 0 ? ' [HABIS]' : '' }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                    <div class="mt-1.5 flex items-center justify-between text-[11px]" x-show="selectedPart" x-cloak>
+                        <span class="text-slate-500">Sisa Stok Gudang:</span>
+                        <span class="font-bold" :class="(selectedPart?.stock_quantity || 0) <= 5 ? 'text-amber-600' : 'text-emerald-700'"
+                              x-text="(selectedPart?.stock_quantity || 0) + ' ' + (selectedPart?.unit || 'Pcs')"></span>
+                    </div>
+                </div>
+
+                <!-- Dropdown Jasa Servis (ketika item_type === 'labor') -->
+                <div x-show="itemType === 'labor'" x-cloak>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Pilih Pekerjaan Jasa (Master Layanan) <span class="text-red-600">*</span></label>
+                    <select name="service_type_id"
+                            x-model="serviceTypeId"
+                            @change="onSelectServiceType()"
+                            :required="itemType === 'labor'"
+                            class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs font-semibold text-slate-800 focus:border-red-600 focus:ring-1 focus:ring-red-600 focus:outline-none">
+                        <option value="">-- Pilih Pekerjaan Jasa Bengkel --</option>
+                        @foreach($serviceTypes as $st)
+                            <option value="{{ $st->id }}">
+                                [{{ $st->code }}] {{ $st->name }} — Rp {{ number_format($st->estimated_cost, 0, ',', '.') }}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
@@ -492,8 +611,9 @@
                         <label class="block text-xs font-bold text-slate-700 mb-1">Kuantitas (Qty) <span class="text-red-600">*</span></label>
                         <input type="number"
                                name="quantity"
-                               value="1"
+                               x-model.number="quantity"
                                min="1"
+                               :max="itemType === 'part' && selectedPart ? selectedPart.stock_quantity : 99"
                                required
                                class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs font-semibold text-slate-800 focus:border-red-600 focus:ring-1 focus:ring-red-600 focus:outline-none">
                     </div>
@@ -502,11 +622,32 @@
                         <label class="block text-xs font-bold text-slate-700 mb-1">Harga Satuan (Rp) <span class="text-red-600">*</span></label>
                         <input type="number"
                                name="unit_price"
+                               x-model.number="unitPrice"
                                min="0"
+                               :readonly="itemType === 'part'"
                                required
-                               placeholder="Contoh: 450000"
-                               class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs font-semibold text-slate-800 focus:border-red-600 focus:ring-1 focus:ring-red-600 focus:outline-none">
+                               :class="itemType === 'part' ? 'bg-slate-100 text-slate-600 cursor-not-allowed' : 'bg-white text-slate-800'"
+                               class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs font-mono font-bold focus:border-red-600 focus:ring-1 focus:ring-red-600 focus:outline-none">
                     </div>
+                </div>
+
+                <!-- Live Subtotal Preview -->
+                <div class="rounded-xl bg-slate-50 border border-slate-200 px-3.5 py-2.5 flex items-center justify-between text-xs">
+                    <span class="font-semibold text-slate-600">Estimasi Subtotal:</span>
+                    <span class="font-mono font-black text-red-600" x-text="'Rp ' + formatRupiah((Number(quantity) || 0) * (Number(unitPrice) || 0))"></span>
+                </div>
+
+                <!-- Approval Requirement Checkbox (for Spare Parts) -->
+                <div x-show="itemType === 'part'" class="rounded-xl bg-amber-50 border border-amber-200 p-3">
+                    <label class="flex items-start gap-2 cursor-pointer">
+                        <input type="hidden" name="requires_approval" value="0">
+                        <input type="checkbox" name="requires_approval" value="1" checked
+                               class="mt-0.5 rounded border-amber-400 text-red-600 focus:ring-red-600">
+                        <span class="text-[11px] text-amber-900 leading-relaxed">
+                            <strong class="font-bold">Wajib Konfirmasi Pelanggan Terlebih Dahulu</strong><br>
+                            Item akan muncul di halaman pelanggan untuk disetujui/ditolak. Stok baru berkurang setelah pelanggan menyetujui.
+                        </span>
+                    </label>
                 </div>
 
                 <div class="flex items-center justify-end gap-2 pt-2">
@@ -522,5 +663,57 @@
     </div>
 
 </div>
+
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('workOrderItemModal', (config) => ({
+            spareParts: config.spareParts || {},
+            serviceTypes: config.serviceTypes || {},
+            itemType: 'part',
+            sparePartId: '',
+            serviceTypeId: '',
+            quantity: 1,
+            unitPrice: 0,
+
+            get selectedPart() {
+                return this.sparePartId ? (this.spareParts[this.sparePartId] || null) : null;
+            },
+
+            get selectedService() {
+                return this.serviceTypeId ? (this.serviceTypes[this.serviceTypeId] || null) : null;
+            },
+
+            onTypeChange() {
+                this.sparePartId = '';
+                this.serviceTypeId = '';
+                this.quantity = 1;
+                this.unitPrice = 0;
+            },
+
+            onSelectSparePart() {
+                if (this.selectedPart) {
+                    this.unitPrice = Number(this.selectedPart.selling_price || 0);
+                    if (this.quantity > this.selectedPart.stock_quantity) {
+                        this.quantity = Math.max(1, this.selectedPart.stock_quantity);
+                    }
+                } else {
+                    this.unitPrice = 0;
+                }
+            },
+
+            onSelectServiceType() {
+                if (this.selectedService) {
+                    this.unitPrice = Number(this.selectedService.estimated_cost || 0);
+                } else {
+                    this.unitPrice = 0;
+                }
+            },
+
+            formatRupiah(num) {
+                return new Intl.NumberFormat('id-ID').format(Math.round(num || 0));
+            }
+        }));
+    });
+</script>
 @endsection
 

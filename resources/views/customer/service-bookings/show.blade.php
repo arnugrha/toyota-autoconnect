@@ -66,21 +66,55 @@
 
             <div class="lg:col-span-2 space-y-6">
 
-                <!-- Service Order Alert if Confirmed -->
+                <!-- Service Order / Invoice Summary Banner -->
                 @if($booking->serviceOrder)
-                    <div class="rounded-2xl border border-blue-200 bg-blue-50/70 p-5 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <span class="px-2 py-0.5 rounded bg-blue-600 text-white font-mono text-[10px] font-bold">WORK ORDER AKTIF</span>
-                                <span class="text-xs font-bold text-blue-900 font-mono">{{ $booking->serviceOrder->order_number }}</span>
+                    @php
+                        $wo = $booking->serviceOrder;
+                        $isFinished = in_array($wo->status, ['completed', 'delivered']);
+                    @endphp
+                    <div class="rounded-2xl border {{ $isFinished ? 'border-emerald-200 bg-emerald-50/80' : 'border-blue-200 bg-blue-50/70' }} p-5 shadow-2xs space-y-3">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div>
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="px-2 py-0.5 rounded {{ $isFinished ? 'bg-emerald-600' : 'bg-blue-600' }} text-white font-mono text-[10px] font-bold">
+                                        {{ $isFinished ? 'INVOICE SERVIS TERSEDIA' : 'WORK ORDER AKTIF' }}
+                                    </span>
+                                    <span class="text-xs font-bold {{ $isFinished ? 'text-emerald-950' : 'text-blue-900' }} font-mono">
+                                        {{ $wo->invoice_number ?? $wo->order_number }}
+                                    </span>
+                                    @if($isFinished)
+                                        <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold border {{ $wo->payment_badge_class }}">
+                                            {{ $wo->payment_status_label }}
+                                        </span>
+                                    @endif
+                                </div>
+                                <p class="text-xs {{ $isFinished ? 'text-emerald-900' : 'text-blue-800' }} mt-1">
+                                    Status Pengerjaan Bengkel: <strong class="font-bold">{{ $wo->status_label }}</strong>
+                                </p>
                             </div>
-                            <p class="text-xs text-blue-800 mt-1">Status Pengerjaan Bengkel: <strong class="font-bold">{{ $booking->serviceOrder->status_label }}</strong></p>
+                            <a href="{{ route('customer.service-histories.show', $wo) }}"
+                               class="inline-flex items-center gap-1.5 rounded-lg {{ $isFinished ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-blue-600 hover:bg-blue-700' }} px-4 py-2 text-xs font-bold text-white shadow-xs transition">
+                                {{ $isFinished ? 'Buka & Cetak Invoice Servis' : 'Lihat Rincian & Estimasi Biaya' }} &rarr;
+                            </a>
                         </div>
-                        <a href="{{ route('customer.service-histories.show', $booking->serviceOrder) }}"
-                           class="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3.5 py-2 text-xs font-bold text-white shadow-xs hover:bg-blue-700 transition">
-                            Lihat Rincian &amp; Faktur Servis &rarr;
-                        </a>
+
+                        <div class="grid grid-cols-3 gap-2 pt-3 border-t {{ $isFinished ? 'border-emerald-200/80' : 'border-blue-200/80' }} text-xs">
+                            <div class="rounded-lg bg-white/80 p-2.5 border border-white">
+                                <span class="text-[10px] text-slate-500 block">Biaya Jasa Servis</span>
+                                <span class="font-mono font-bold text-slate-900">{{ $wo->formatted_labor_cost }}</span>
+                            </div>
+                            <div class="rounded-lg bg-white/80 p-2.5 border border-white">
+                                <span class="text-[10px] text-slate-500 block">Suku Cadang</span>
+                                <span class="font-mono font-bold text-slate-900">{{ $wo->formatted_parts_cost }}</span>
+                            </div>
+                            <div class="rounded-lg bg-white/80 p-2.5 border border-white">
+                                <span class="text-[10px] text-slate-500 block">Total Tagihan</span>
+                                <span class="font-mono font-black text-red-600">{{ $wo->formatted_final_cost }}</span>
+                            </div>
+                        </div>
                     </div>
+
+                    @include('customer.partials.spare-part-approval-card', ['order' => $wo])
                 @endif
 
                 <!-- Card 1: Data Jadwal & Bengkel -->

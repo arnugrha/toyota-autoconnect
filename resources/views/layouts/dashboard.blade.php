@@ -343,6 +343,30 @@
                                 </a>
                             @endcan
 
+                            @can('spare-parts.view')
+                                <a href="{{ route('admin.spare-parts.index') }}"
+                                   class="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.spare-parts.*') ? 'bg-red-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                    <div class="flex items-center gap-2.5">
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+                                        </svg>
+                                        <span>Kelola Sparepart</span>
+                                    </div>
+                                    <span class="text-[9px] font-bold px-1.5 py-0.2 rounded {{ request()->routeIs('admin.spare-parts.*') ? 'bg-red-800 text-white' : 'bg-slate-800 text-sky-400' }}">Stok</span>
+                                </a>
+
+                                <a href="{{ route('admin.spare-part-procurements.index') }}"
+                                   class="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.spare-part-procurements.*') ? 'bg-red-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                    <div class="flex items-center gap-2.5">
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
+                                        </svg>
+                                        <span>Pengadaan Sparepart</span>
+                                    </div>
+                                    <span class="text-[9px] font-bold px-1.5 py-0.2 rounded {{ request()->routeIs('admin.spare-part-procurements.*') ? 'bg-red-800 text-white' : 'bg-slate-800 text-emerald-400' }}">+Stok</span>
+                                </a>
+                            @endcan
+
 
                         </nav>
                     </div>

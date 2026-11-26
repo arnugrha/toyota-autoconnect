@@ -10,6 +10,8 @@ use App\Http\Controllers\AdminServiceBookingController;
 use App\Http\Controllers\AdminServiceOrderController;
 use App\Http\Controllers\AdminServiceReminderController;
 use App\Http\Controllers\AdminServiceScheduleController;
+use App\Http\Controllers\AdminSparePartController;
+use App\Http\Controllers\AdminSparePartProcurementController;
 use App\Http\Controllers\AdminSupportTicketController;
 use App\Http\Controllers\AdminTestDriveController;
 use App\Http\Controllers\AdminVehicleBookingController;
@@ -176,7 +178,12 @@ Route::middleware('auth')->group(function () {
 
         // Customer Service Histories & Invoices (Tahap 8)
         Route::get('/customer/service-histories', [CustomerServiceHistoryController::class, 'index'])->name('customer.service-histories.index');
-        Route::get('/customer/service-histories/{order}', [CustomerServiceHistoryController::class, 'show'])->name('customer.service-histories.show');
+        Route::get('/customer/service-histories/{serviceOrder}', [CustomerServiceHistoryController::class, 'show'])->name('customer.service-histories.show');
+
+        // Customer Spare Part Additional Confirmation (Revisi Tambahan Tahap 4)
+        Route::post('/customer/service-orders/{serviceOrder}/items/approve-all', [CustomerServiceHistoryController::class, 'approveAllItems'])->name('customer.service-orders.items.approve-all');
+        Route::post('/customer/service-orders/{serviceOrder}/items/{item}/approve', [CustomerServiceHistoryController::class, 'approveItem'])->name('customer.service-orders.items.approve');
+        Route::post('/customer/service-orders/{serviceOrder}/items/{item}/reject', [CustomerServiceHistoryController::class, 'rejectItem'])->name('customer.service-orders.items.reject');
 
         // Customer Service Reminders (Tahap 8)
         Route::get('/customer/service-reminders', [CustomerServiceReminderController::class, 'index'])->name('customer.service-reminders.index');
@@ -415,12 +422,32 @@ Route::middleware('auth')->group(function () {
             Route::post('/service-orders/{serviceOrder}/inspection', [AdminServiceOrderController::class, 'recordInspection'])->name('service-orders.inspection.store');
             Route::post('/service-orders/{serviceOrder}/items', [AdminServiceOrderController::class, 'addItem'])->name('service-orders.items.store');
             Route::delete('/service-orders/{serviceOrder}/items/{item}', [AdminServiceOrderController::class, 'removeItem'])->name('service-orders.items.destroy');
+            Route::post('/service-orders/{serviceOrder}/mark-paid', [AdminServiceOrderController::class, 'markPaid'])->name('service-orders.mark-paid');
         });
 
         // After-Sales Service Reminders (Tahap 8)
         Route::middleware('permission:service-orders.manage')->group(function () {
             Route::get('/service-reminders', [AdminServiceReminderController::class, 'index'])->name('service-reminders.index');
             Route::post('/service-reminders/trigger', [AdminServiceReminderController::class, 'trigger'])->name('service-reminders.trigger');
+        });
+
+        // Spare Parts Management (Revisi Tambahan Tahap 1 & 2)
+        Route::middleware('permission:spare-parts.manage')->group(function () {
+            Route::post('/spare-parts', [AdminSparePartController::class, 'store'])->name('spare-parts.store');
+            Route::put('/spare-parts/{sparePart}', [AdminSparePartController::class, 'update'])->name('spare-parts.update');
+            Route::post('/spare-parts/{sparePart}/toggle-status', [AdminSparePartController::class, 'toggleStatus'])->name('spare-parts.toggle-status');
+            Route::delete('/spare-parts/{sparePart}', [AdminSparePartController::class, 'destroy'])->name('spare-parts.destroy');
+
+            Route::get('/spare-part-procurements/create', [AdminSparePartProcurementController::class, 'create'])->name('spare-part-procurements.create');
+            Route::post('/spare-part-procurements', [AdminSparePartProcurementController::class, 'store'])->name('spare-part-procurements.store');
+        });
+
+        Route::middleware('permission:spare-parts.view')->group(function () {
+            Route::get('/spare-parts', [AdminSparePartController::class, 'index'])->name('spare-parts.index');
+            Route::get('/spare-parts/{sparePart}/movements', [AdminSparePartController::class, 'movements'])->name('spare-parts.movements');
+
+            Route::get('/spare-part-procurements', [AdminSparePartProcurementController::class, 'index'])->name('spare-part-procurements.index');
+            Route::get('/spare-part-procurements/{procurement}', [AdminSparePartProcurementController::class, 'show'])->name('spare-part-procurements.show');
         });
 
         // Customer Service Tickets / Helpdesk (Tahap 8)

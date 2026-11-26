@@ -127,6 +127,16 @@
                                     <span class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-bold border {{ $booking->status_badge_class }}">
                                         {{ $booking->status_label }}
                                     </span>
+                                    @php
+                                        $pendingPartCount = $booking->serviceOrder
+                                            ? $booking->serviceOrder->items->where('approval_status', 'pending_approval')->count()
+                                            : 0;
+                                    @endphp
+                                    @if($pendingPartCount > 0)
+                                        <span class="mt-1 inline-flex items-center gap-1 rounded-full bg-amber-100 border border-amber-300 px-2 py-0.5 text-[10px] font-extrabold text-amber-800 animate-pulse">
+                                            Konfirmasi Sparepart ({{ $pendingPartCount }})
+                                        </span>
+                                    @endif
                                 </td>
                                 <td class="px-5 py-4 text-right whitespace-nowrap">
                                     <a href="{{ route('customer.service-bookings.show', $booking) }}"
