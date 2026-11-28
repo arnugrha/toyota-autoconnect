@@ -224,6 +224,26 @@ class VehicleCatalogTest extends TestCase
         $response->assertSee('Toyota Sample Exterior Photo');
     }
 
+    public function test_vehicle_serves_real_jpg_photo_instead_of_svg(): void
+    {
+        $vehicle = Vehicle::factory()->create([
+            'name' => 'All New bZ4X EV',
+            'slug' => 'all-new-bz4x-ev',
+            'published_at' => now()->subDay(),
+        ]);
+
+        VehicleImage::factory()->create([
+            'vehicle_id' => $vehicle->id,
+            'image_path' => 'images/vehicles/all-new-bz4x-ev-exterior.svg',
+            'alt_text' => 'Toyota bZ4X Exterior Photo',
+            'sort_order' => 1,
+            'is_primary' => true,
+        ]);
+
+        $this->assertStringEndsWith('.jpg', $vehicle->primary_image_url);
+        $this->assertStringContainsString('all-new-bz4x-ev-exterior.jpg', $vehicle->primary_image_url);
+    }
+
     public function test_nullable_price_is_handled_gracefully(): void
     {
         $vehicle = Vehicle::factory()->withoutPrice()->create([

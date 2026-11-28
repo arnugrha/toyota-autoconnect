@@ -9,6 +9,7 @@ use App\Models\ServiceOrderItem;
 use App\Models\ServiceReminder;
 use App\Models\ServiceSchedule;
 use App\Models\ServiceType;
+use App\Models\SparePart;
 use App\Models\SupportTicket;
 use App\Models\User;
 use App\Models\Vehicle;
@@ -532,20 +533,42 @@ class ServiceManagementAndCustomerServiceTest extends TestCase
             'status' => 'in_progress',
         ]);
 
-        // Add part item: 4 x 100,000 = 400,000
+        $sparePart = SparePart::create([
+            'part_number' => 'OIL-TMO-001',
+            'name' => 'Toyota Motor Oil 1L',
+            'selling_price' => 100000,
+            'purchase_price' => 70000,
+            'stock_quantity' => 10,
+            'min_stock' => 2,
+            'unit' => 'Liter',
+            'is_active' => true,
+        ]);
+
+        $laborService = ServiceType::firstOrCreate(
+            ['slug' => 'jasa-servis-berkala'],
+            [
+                'code' => 'JS-001',
+                'name' => 'Jasa Servis Berkala',
+                'description' => 'Servis berkala',
+                'estimated_duration_minutes' => 60,
+                'estimated_cost' => 250000,
+                'is_active' => true,
+            ]
+        );
+
+        // Add part item: 4 x 100,000 = 400,000 (pre-approved so it recalculates final_cost)
         $this->actingAs($this->serviceAdvisor)->post(route('admin.service-orders.items.store', $order), [
             'item_type' => 'part',
-            'name' => 'Toyota Motor Oil 1L',
+            'spare_part_id' => $sparePart->id,
             'quantity' => 4,
-            'unit_price' => 100000,
+            'requires_approval' => '0',
         ]);
 
         // Add labor item: 1 x 250,000 = 250,000
         $this->actingAs($this->serviceAdvisor)->post(route('admin.service-orders.items.store', $order), [
             'item_type' => 'labor',
-            'name' => 'Jasa Servis Berkala',
+            'service_type_id' => $laborService->id,
             'quantity' => 1,
-            'unit_price' => 250000,
         ]);
 
         $order->refresh();

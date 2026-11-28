@@ -235,6 +235,31 @@ class ExecutiveAnalyticsController extends Controller
         // Combined Total Business Revenue (Unit Sales Gross + Workshop Service)
         $totalCombinedRevenue = $totalSalesGross + $totalServiceRevenue;
 
+        // 3b. Executive Profit & Margin Calculations (Laba Bisnis)
+        // Estimasi margin laba kotor dealer penjualan mobil baru rata-rata 7.0%
+        $vehicleEstimatedGrossProfit = $totalSalesGross * 0.07;
+
+        // Estimasi margin laba kotor bengkel (jasa teknisi ~60%, suku cadang asli ~28%)
+        $laborRevenue = (float) (clone $serviceQuery)->sum('labor_cost');
+        $partsRevenue = (float) (clone $serviceQuery)->sum('parts_cost');
+        $serviceEstimatedProfit = ($laborRevenue > 0 || $partsRevenue > 0)
+            ? ($laborRevenue * 0.60) + ($partsRevenue * 0.28)
+            : ($totalServiceRevenue * 0.40);
+
+        // Total Laba Kotor Bisnis (Total Gross Profit)
+        $totalGrossProfit = $vehicleEstimatedGrossProfit + $serviceEstimatedProfit;
+
+        // Margin Laba Kotor (%)
+        $grossProfitMargin = $totalCombinedRevenue > 0
+            ? ($totalGrossProfit / $totalCombinedRevenue) * 100
+            : 0;
+
+        // Estimasi Laba Bersih Operasional (Net Operating Profit, proyeksi OPEX 35% dari laba kotor)
+        $netOperatingProfit = $totalGrossProfit * 0.65;
+        $netProfitMargin = $totalCombinedRevenue > 0
+            ? ($netOperatingProfit / $totalCombinedRevenue) * 100
+            : 0;
+
         // 4. Branch Revenue Breakdown (Perbandingan Antar Cabang)
         $branches = Branch::where('is_active', true)->orderBy('name')->get();
         $branchBreakdown = [];
@@ -252,6 +277,8 @@ class ExecutiveAnalyticsController extends Controller
                 ->where('status', 'paid')
                 ->sum('amount');
             $bTotal = $bSales + $bService;
+            $bProfit = ($bSales * 0.07) + ($bService * 0.40);
+            $bMargin = $bTotal > 0 ? ($bProfit / $bTotal) * 100 : 0;
 
             $branchBreakdown[] = [
                 'branch' => $b,
@@ -259,6 +286,8 @@ class ExecutiveAnalyticsController extends Controller
                 'service_revenue' => $bService,
                 'cash_inflow' => $bCash,
                 'total_revenue' => $bTotal,
+                'estimated_profit' => $bProfit,
+                'profit_margin' => $bMargin,
             ];
         }
 
@@ -290,6 +319,12 @@ class ExecutiveAnalyticsController extends Controller
             'stats' => [
                 'total_combined_revenue' => $totalCombinedRevenue,
                 'total_sales_gross' => $totalSalesGross,
+                'total_gross_profit' => $totalGrossProfit,
+                'vehicle_gross_profit' => $vehicleEstimatedGrossProfit,
+                'service_gross_profit' => $serviceEstimatedProfit,
+                'gross_profit_margin' => $grossProfitMargin,
+                'net_operating_profit' => $netOperatingProfit,
+                'net_profit_margin' => $netProfitMargin,
                 'cash_inflow_received' => $cashInflowReceived,
                 'pending_cash_inflow' => $pendingCashInflow,
                 'total_booking_fee' => $totalBookingFeeReceived,

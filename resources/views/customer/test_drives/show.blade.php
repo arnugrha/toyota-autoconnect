@@ -8,24 +8,6 @@
 <div class="bg-slate-50 min-h-[75vh] py-8 sm:py-10" x-data="{ cancelModalOpen: false }">
     <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 space-y-6">
 
-        <!-- Flash Messages -->
-        @if (session('success'))
-            <div class="flex items-center gap-2.5 rounded-xl bg-emerald-50 border border-emerald-200 p-4 text-xs text-emerald-800">
-                <svg class="h-4 w-4 text-emerald-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                </svg>
-                <span>{{ session('success') }}</span>
-            </div>
-        @endif
-
-        @if (session('error'))
-            <div class="flex items-center gap-2.5 rounded-xl bg-red-50 border border-red-200 p-4 text-xs text-red-800">
-                <svg class="h-4 w-4 text-red-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
-                </svg>
-                <span>{{ session('error') }}</span>
-            </div>
-        @endif
 
         <!-- Breadcrumb & Top Bar -->
         <div class="flex items-center justify-between">

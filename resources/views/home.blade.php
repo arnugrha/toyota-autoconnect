@@ -5,7 +5,7 @@
 
 @section('content')
     <!-- Hero Section -->
-    <section class="relative overflow-hidden bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 text-white">
+    <section class="relative overflow-hidden bg-slate-900 bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 text-white" style="background-color: #0f172a;">
         <!-- Background Lighting Texture -->
         <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-red-600/15 via-transparent to-transparent opacity-70"></div>
         <div class="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-red-600/10 blur-3xl"></div>

@@ -7,6 +7,7 @@ use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -26,6 +27,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Implicitly grant Super Admin all permissions across all gates/policies
+        Gate::before(function ($user, string $ability) {
+            return $user->hasRole('Super Admin') ? true : null;
+        });
+
         // Audit Trail Authentication Listeners
         Event::listen(Login::class, function (Login $event) {
             app(AuditTrailService::class)->logAuth('login', $event->user, true);

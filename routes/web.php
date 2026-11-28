@@ -101,9 +101,11 @@ Route::middleware('auth')->group(function () {
         /** @var User $user */
         $user = Auth::user();
 
-        return $user->hasRole('Customer')
-            ? redirect()->route('customer.dashboard')
-            : redirect()->route('admin.dashboard');
+        return match (true) {
+            $user->hasRole('Customer') => redirect()->route('customer.dashboard'),
+            $user->hasRole('Owner') => redirect()->route('admin.owner.revenue'),
+            default => redirect()->route('admin.dashboard'),
+        };
     })->name('dashboard');
 
     // User Profile

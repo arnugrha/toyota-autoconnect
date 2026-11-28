@@ -5,31 +5,33 @@
 @section('content')
 <div class="space-y-6" x-data="{ showStatusModal: false, showInspectionModal: false, showAddItemModal: false }">
 
-    <!-- Header & Action -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
+    <!-- Header & Action Toolbar -->
+    <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4 pb-2 border-b border-slate-100">
+        <div class="min-w-0">
             <div class="flex items-center gap-2 text-xs text-slate-500 mb-1">
-                <a href="{{ route('admin.service-orders.index') }}" class="hover:text-red-600 transition">Work Orders</a>
+                <a href="{{ route('admin.service-orders.index') }}" class="hover:text-red-600 transition inline-flex items-center gap-1 font-medium">
+                    &larr; Work Orders
+                </a>
                 <span>/</span>
                 <span class="text-slate-900 font-bold font-mono">{{ $order->order_number }}</span>
             </div>
-            <div class="flex items-center gap-3">
-                <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight font-mono">{{ $order->order_number }}</h1>
-                <span class="inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-bold border {{ $order->status_badge_class }}">
+            <div class="flex items-center gap-3 flex-wrap">
+                <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight font-mono whitespace-nowrap">{{ $order->order_number }}</h1>
+                <span class="inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-bold border whitespace-nowrap {{ $order->status_badge_class }}">
                     {{ $order->status_label }}
                 </span>
             </div>
         </div>
 
-        <div class="flex items-center gap-2 flex-wrap">
+        <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
             <a href="{{ route('admin.service-orders.index') }}"
-               class="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition shadow-2xs">
+               class="inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition shadow-2xs whitespace-nowrap">
                 &larr; Kembali
             </a>
 
             <button type="button"
                     @click="showStatusModal = true"
-                    class="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-slate-800 transition">
+                    class="inline-flex items-center justify-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-slate-800 transition whitespace-nowrap">
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
                 </svg>
@@ -38,7 +40,7 @@
 
             <button type="button"
                     @click="showInspectionModal = true"
-                    class="inline-flex items-center gap-1.5 rounded-xl border border-amber-300 bg-amber-50 px-3.5 py-2 text-xs font-bold text-amber-800 hover:bg-amber-100 transition shadow-2xs">
+                    class="inline-flex items-center justify-center gap-1.5 rounded-xl border border-amber-300 bg-amber-50 px-3.5 py-2.5 text-xs font-bold text-amber-800 hover:bg-amber-100 transition shadow-2xs whitespace-nowrap">
                 <svg class="h-4 w-4 text-amber-700" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
                 </svg>
@@ -47,32 +49,14 @@
 
             <button type="button"
                     @click="showAddItemModal = true"
-                    class="inline-flex items-center gap-1.5 rounded-xl bg-red-600 px-3.5 py-2 text-xs font-bold text-white shadow-xs hover:bg-red-700 transition">
+                    class="inline-flex items-center justify-center gap-1.5 rounded-xl bg-red-600 px-4 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-red-700 transition whitespace-nowrap">
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
-                Tambah Part / Jasa
+                + Tambah Part / Jasa
             </button>
         </div>
     </div>
-
-    @if(session('success'))
-        <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-xs font-semibold text-emerald-800 shadow-2xs flex items-center gap-2">
-            <svg class="h-4 w-4 text-emerald-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-            </svg>
-            <span>{{ session('success') }}</span>
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="rounded-xl border border-rose-200 bg-rose-50 p-4 text-xs font-semibold text-rose-800 shadow-2xs flex items-center gap-2">
-            <svg class="h-4 w-4 text-rose-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
-            </svg>
-            <span>{{ session('error') }}</span>
-        </div>
-    @endif
 
     <!-- 9 Stages Workflow Bar -->
     @php

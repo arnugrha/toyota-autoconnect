@@ -58,14 +58,6 @@
             </div>
         </div>
 
-        @if(session('success'))
-            <div class="rounded-xl border border-emerald-200 bg-emerald-50/80 p-3.5 text-xs font-semibold text-emerald-800 flex items-center gap-2">
-                <svg class="h-4 w-4 text-emerald-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                </svg>
-                <span>{{ session('success') }}</span>
-            </div>
-        @endif
 
         <!-- Filter Tabs -->
         <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none text-xs font-bold">

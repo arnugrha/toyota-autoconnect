@@ -5,32 +5,34 @@
 @section('content')
 <div class="space-y-6" x-data="{ showConfirmModal: false, showRescheduleModal: false, showRejectModal: false }">
 
-    <!-- Header & Action -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
+    <!-- Header & Action Toolbar -->
+    <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4 pb-2 border-b border-slate-100">
+        <div class="min-w-0">
             <div class="flex items-center gap-2 text-xs text-slate-500 mb-1">
-                <a href="{{ route('admin.service-bookings.index') }}" class="hover:text-red-600 transition">Booking Servis</a>
+                <a href="{{ route('admin.service-bookings.index') }}" class="hover:text-red-600 transition inline-flex items-center gap-1 font-medium">
+                    &larr; Booking Servis
+                </a>
                 <span>/</span>
                 <span class="text-slate-900 font-bold font-mono">{{ $booking->booking_code }}</span>
             </div>
-            <div class="flex items-center gap-3">
-                <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight font-mono">{{ $booking->booking_code }}</h1>
-                <span class="inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-bold border {{ $booking->status_badge_class }}">
+            <div class="flex items-center gap-3 flex-wrap">
+                <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight font-mono whitespace-nowrap">{{ $booking->booking_code }}</h1>
+                <span class="inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-bold border whitespace-nowrap {{ $booking->status_badge_class }}">
                     {{ $booking->status_label }}
                 </span>
             </div>
         </div>
 
-        <div class="flex items-center gap-2 flex-wrap">
+        <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
             <a href="{{ route('admin.service-bookings.index') }}"
-               class="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition shadow-2xs">
+               class="inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition shadow-2xs whitespace-nowrap">
                 &larr; Kembali
             </a>
 
             @if($booking->status === 'pending')
                 <button type="button"
                         @click="showConfirmModal = true"
-                        class="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-emerald-700 transition">
+                        class="inline-flex items-center justify-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-emerald-700 transition whitespace-nowrap">
                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
                     </svg>
@@ -39,16 +41,16 @@
 
                 <button type="button"
                         @click="showRescheduleModal = true"
-                        class="inline-flex items-center gap-1.5 rounded-xl border border-amber-300 bg-amber-50 px-3.5 py-2 text-xs font-bold text-amber-800 hover:bg-amber-100 transition shadow-2xs">
+                        class="inline-flex items-center justify-center gap-1.5 rounded-xl border border-amber-300 bg-amber-50 px-3.5 py-2.5 text-xs font-bold text-amber-800 hover:bg-amber-100 transition shadow-2xs whitespace-nowrap">
                     <svg class="h-4 w-4 text-amber-700" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                     </svg>
-                    Ubah Jadwal (Reschedule)
+                    Ubah Jadwal
                 </button>
 
                 <button type="button"
                         @click="showRejectModal = true"
-                        class="inline-flex items-center gap-1.5 rounded-xl border border-rose-300 bg-rose-50 px-3.5 py-2 text-xs font-bold text-rose-800 hover:bg-rose-100 transition shadow-2xs">
+                        class="inline-flex items-center justify-center gap-1.5 rounded-xl border border-rose-300 bg-rose-50 px-3.5 py-2.5 text-xs font-bold text-rose-800 hover:bg-rose-100 transition shadow-2xs whitespace-nowrap">
                     <svg class="h-4 w-4 text-rose-700" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
                     </svg>
@@ -57,24 +59,6 @@
             @endif
         </div>
     </div>
-
-    @if(session('success'))
-        <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-xs font-semibold text-emerald-800 shadow-2xs flex items-center gap-2">
-            <svg class="h-4 w-4 text-emerald-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-            </svg>
-            <span>{{ session('success') }}</span>
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="rounded-xl border border-rose-200 bg-rose-50 p-4 text-xs font-semibold text-rose-800 shadow-2xs flex items-center gap-2">
-            <svg class="h-4 w-4 text-rose-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
-            </svg>
-            <span>{{ session('error') }}</span>
-        </div>
-    @endif
 
     <!-- Linked Service Order Banner if exists -->
     @if($booking->serviceOrder)

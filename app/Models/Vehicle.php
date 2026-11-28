@@ -152,7 +152,11 @@ class Vehicle extends Model
                     return $img->url;
                 }
 
-                return asset('images/placeholder-car.svg');
+                if ($this->slug && file_exists(public_path("images/vehicles/{$this->slug}-exterior.jpg"))) {
+                    return asset("images/vehicles/{$this->slug}-exterior.jpg");
+                }
+
+                return asset('images/placeholder-car.jpg');
             }
         );
     }

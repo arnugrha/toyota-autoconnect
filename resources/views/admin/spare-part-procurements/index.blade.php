@@ -44,14 +44,14 @@
                 <p class="text-[11px] text-slate-500 mt-0.5">Setiap pengadaan baru otomatis menambah saldo stok di halaman Kelola Sparepart.</p>
             </div>
 
-            <div class="flex items-center gap-2 flex-wrap">
+            <div class="flex items-center gap-2.5 flex-wrap sm:flex-nowrap">
                 <a href="{{ route('admin.spare-parts.index') }}"
-                   class="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition">
+                   class="inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition whitespace-nowrap shadow-2xs">
                     Lihat Stok Sparepart
                 </a>
                 @can('spare-parts.manage')
                     <a href="{{ route('admin.spare-part-procurements.create') }}"
-                       class="inline-flex items-center gap-1.5 rounded-xl bg-red-600 px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-red-700 transition">
+                       class="inline-flex items-center justify-center gap-1.5 rounded-xl bg-red-600 px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-red-700 transition whitespace-nowrap">
                         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                         </svg>

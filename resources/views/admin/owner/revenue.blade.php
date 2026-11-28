@@ -48,15 +48,15 @@
         'formAction' => route('admin.owner.revenue')
     ])
 
-    <!-- 1. Executive Summary Cards (Hero Metrics) -->
+    <!-- 1. Executive Summary Cards (Hero Metrics: Pendapatan & Laba) -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
         <!-- Card 1: Total Omzet Bruto Bisnis -->
-        <div class="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 p-5 text-white shadow-md">
+        <div class="rounded-2xl border border-slate-800 bg-slate-900 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 p-5 text-white shadow-md" style="background-color: #0f172a;">
             <div class="flex items-center justify-between">
-                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Omzet Bruto Bisnis</span>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Omzet Bisnis</span>
                 <span class="rounded-lg bg-red-600/30 border border-red-500/30 px-2 py-0.5 text-[10px] font-bold text-red-300">
-                    Akumulasi
+                    Gross Revenue
                 </span>
             </div>
             <div class="mt-3">
@@ -64,29 +64,73 @@
                     Rp {{ number_format($stats['total_combined_revenue'], 0, ',', '.') }}
                 </div>
                 <p class="text-[11px] text-slate-400 mt-1">
-                    Penjualan Kendaraan Baru + Jasa &amp; Parts Bengkel
+                    Akumulasi penjualan mobil baru + bengkel resmi
                 </p>
             </div>
             <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-300">
-                <span>Unit Terkonfirmasi: <strong>{{ number_format($stats['confirmed_spk_count']) }} SPK</strong></span>
+                <span>Unit: <strong>{{ number_format($stats['confirmed_spk_count']) }} SPK</strong></span>
                 <span>Bengkel: <strong>{{ number_format($stats['service_order_count']) }} WO</strong></span>
             </div>
         </div>
 
-        <!-- Card 2: Kas Riil Diterima (Realized Cash Inflow) -->
+        <!-- Card 2: Estimasi Laba Kotor Bisnis (Gross Profit) -->
         <div class="rounded-2xl border border-emerald-200 bg-white p-5 shadow-xs">
             <div class="flex items-center justify-between">
-                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Kas Masuk Terealisasi</span>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Estimasi Laba Kotor</span>
                 <span class="rounded-lg bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
-                    Settled
+                    Margin {{ number_format($stats['gross_profit_margin'], 1) }}%
                 </span>
             </div>
             <div class="mt-3">
                 <div class="text-2xl sm:text-3xl font-extrabold tracking-tight text-emerald-600">
+                    Rp {{ number_format($stats['total_gross_profit'], 0, ',', '.') }}
+                </div>
+                <p class="text-[11px] text-slate-500 mt-1">
+                    Estimasi profit kotor dari unit SPK &amp; purnajual bengkel
+                </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-600">
+                <span>Laba Unit: <strong>Rp {{ number_format($stats['vehicle_gross_profit'], 0, ',', '.') }}</strong></span>
+                <span>Laba Servis: <strong>Rp {{ number_format($stats['service_gross_profit'], 0, ',', '.') }}</strong></span>
+            </div>
+        </div>
+
+        <!-- Card 3: Proyeksi Laba Bersih (Net Operating Profit) -->
+        <div class="rounded-2xl border border-indigo-200 bg-white p-5 shadow-xs">
+            <div class="flex items-center justify-between">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Proyeksi Laba Bersih</span>
+                <span class="rounded-lg bg-indigo-50 border border-indigo-200 px-2 py-0.5 text-[10px] font-bold text-indigo-700">
+                    EBT {{ number_format($stats['net_profit_margin'], 1) }}%
+                </span>
+            </div>
+            <div class="mt-3">
+                <div class="text-2xl sm:text-3xl font-extrabold tracking-tight text-indigo-700">
+                    Rp {{ number_format($stats['net_operating_profit'], 0, ',', '.') }}
+                </div>
+                <p class="text-[11px] text-slate-500 mt-1">
+                    Estimasi laba bersih setelah asumsi beban OPEX dealer
+                </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-600">
+                <span>Rasio Efisiensi:</span>
+                <span class="font-bold text-indigo-700">Sehat (65% GP)</span>
+            </div>
+        </div>
+
+        <!-- Card 4: Kas Riil Diterima (Realized Cash Inflow) -->
+        <div class="rounded-2xl border border-blue-200 bg-white p-5 shadow-xs">
+            <div class="flex items-center justify-between">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Kas Masuk Terealisasi</span>
+                <span class="rounded-lg bg-blue-50 border border-blue-200 px-2 py-0.5 text-[10px] font-bold text-blue-700">
+                    Settled
+                </span>
+            </div>
+            <div class="mt-3">
+                <div class="text-2xl sm:text-3xl font-extrabold tracking-tight text-blue-700">
                     Rp {{ number_format($stats['cash_inflow_received'], 0, ',', '.') }}
                 </div>
                 <p class="text-[11px] text-slate-500 mt-1">
-                    Dana bersih terkonfirmasi masuk via Payment Gateway &amp; Kas
+                    Dana terkonfirmasi masuk via Midtrans &amp; Kasir
                 </p>
             </div>
             <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-600">
@@ -94,48 +138,47 @@
                 <span class="font-bold text-slate-900">Rp {{ number_format($stats['total_booking_fee'], 0, ',', '.') }}</span>
             </div>
         </div>
+    </div>
 
-        <!-- Card 3: Omzet Penjualan Unit Kendaraan -->
-        <div class="rounded-2xl border border-blue-200 bg-white p-5 shadow-xs">
-            <div class="flex items-center justify-between">
-                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Nilai Penjualan Unit</span>
-                <span class="rounded-lg bg-blue-50 border border-blue-200 px-2 py-0.5 text-[10px] font-bold text-blue-700">
-                    Mobil Baru
-                </span>
-            </div>
-            <div class="mt-3">
-                <div class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
-                    Rp {{ number_format($stats['total_sales_gross'], 0, ',', '.') }}
+    <!-- 1b. Segment Revenue & Profit Overview Banner -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-2xs flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="h-10 w-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.25V3.75m0 3.75h-6m6 0a3.75 3.75 0 0 1 3.75 3.75v1.5m-9.75-5.25V3.75m0 3.75a3.75 3.75 0 0 0-3.75 3.75v1.5m0 0H18.75" />
+                    </svg>
                 </div>
-                <p class="text-[11px] text-slate-500 mt-1">
-                    Total nilai transaksi SPK unit berstatus confirmed &amp; lunas
-                </p>
+                <div>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Lini Penjualan Mobil Baru</span>
+                    <p class="text-sm font-extrabold text-slate-900">Rp {{ number_format($stats['total_sales_gross'], 0, ',', '.') }}</p>
+                    <p class="text-[11px] text-slate-500">Estimasi Laba: <span class="font-bold text-emerald-600">Rp {{ number_format($stats['vehicle_gross_profit'], 0, ',', '.') }}</span> (7.0%)</p>
+                </div>
             </div>
-            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-600">
-                <span>Total Permohonan:</span>
-                <span class="font-bold text-slate-900">{{ number_format($stats['total_spk_count']) }} SPK Masuk</span>
+            <div class="text-right">
+                <span class="rounded bg-blue-50 text-blue-700 font-bold text-[10px] px-2 py-0.5">
+                    {{ number_format($stats['confirmed_spk_count']) }} SPK Confirmed
+                </span>
             </div>
         </div>
 
-        <!-- Card 4: Omzet Servis & After-Sales -->
-        <div class="rounded-2xl border border-amber-200 bg-white p-5 shadow-xs">
-            <div class="flex items-center justify-between">
-                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Omzet Bengkel Resmi</span>
-                <span class="rounded-lg bg-amber-50 border border-amber-200 px-2 py-0.5 text-[10px] font-bold text-amber-700">
-                    After-Sales
-                </span>
-            </div>
-            <div class="mt-3">
-                <div class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
-                    Rp {{ number_format($stats['total_service_revenue'], 0, ',', '.') }}
+        <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-2xs flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="h-10 w-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.07a4.5 4.5 0 0 0 4.486-6.32l-3.27 3.27-2.828-2.828 3.27-3.27a4.5 4.5 0 0 0-6.32 4.486c.118.58.094 1.193-.07 1.743" />
+                    </svg>
                 </div>
-                <p class="text-[11px] text-slate-500 mt-1">
-                    Pendapatan jasa teknisi &amp; suku cadang asli Toyota (TMO)
-                </p>
+                <div>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Lini Bengkel &amp; After-Sales</span>
+                    <p class="text-sm font-extrabold text-slate-900">Rp {{ number_format($stats['total_service_revenue'], 0, ',', '.') }}</p>
+                    <p class="text-[11px] text-slate-500">Estimasi Laba: <span class="font-bold text-emerald-600">Rp {{ number_format($stats['service_gross_profit'], 0, ',', '.') }}</span> (~40%)</p>
+                </div>
             </div>
-            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-600">
-                <span>SPK Pending Inflow:</span>
-                <span class="font-bold text-amber-600">Rp {{ number_format($stats['pending_cash_inflow'], 0, ',', '.') }}</span>
+            <div class="text-right">
+                <span class="rounded bg-amber-50 text-amber-700 font-bold text-[10px] px-2 py-0.5">
+                    {{ number_format($stats['service_order_count']) }} Servis Selesai
+                </span>
             </div>
         </div>
     </div>
@@ -163,6 +206,7 @@
                             <th class="py-2.5 px-3 text-right">Penjualan Unit</th>
                             <th class="py-2.5 px-3 text-right">Jasa Bengkel</th>
                             <th class="py-2.5 px-3 text-right">Total Omzet</th>
+                            <th class="py-2.5 px-3 text-right">Estimasi Laba</th>
                             <th class="py-2.5 px-3 text-right">Kas Real</th>
                         </tr>
                     </thead>
@@ -179,16 +223,20 @@
                                 <td class="py-3 px-3 text-right text-slate-800">
                                     Rp {{ number_format($bData['service_revenue'], 0, ',', '.') }}
                                 </td>
-                                <td class="py-3 px-3 text-right font-bold text-red-600">
+                                <td class="py-3 px-3 text-right font-bold text-slate-900">
                                     Rp {{ number_format($bData['total_revenue'], 0, ',', '.') }}
                                 </td>
-                                <td class="py-3 px-3 text-right text-emerald-600 font-semibold">
+                                <td class="py-3 px-3 text-right">
+                                    <div class="font-extrabold text-emerald-600">Rp {{ number_format($bData['estimated_profit'], 0, ',', '.') }}</div>
+                                    <div class="text-[10px] text-slate-400">Margin {{ number_format($bData['profit_margin'], 1) }}%</div>
+                                </td>
+                                <td class="py-3 px-3 text-right text-blue-600 font-semibold">
                                     Rp {{ number_format($bData['cash_inflow'], 0, ',', '.') }}
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="py-6 text-center text-xs text-slate-400">
+                                <td colspan="6" class="py-6 text-center text-xs text-slate-400">
                                     Belum ada data transaksi cabang pada periode yang dipilih.
                                 </td>
                             </tr>

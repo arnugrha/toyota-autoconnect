@@ -9,7 +9,7 @@
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-6">
 
         <!-- Welcome Hero Banner -->
-        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 p-6 sm:p-8 text-white shadow-sm border border-slate-800">
+        <div class="relative overflow-hidden rounded-2xl bg-slate-900 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 p-6 sm:p-8 text-white shadow-sm border border-slate-800" style="background-color: #0f172a;">
             <div class="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-red-600/20 blur-3xl pointer-events-none"></div>
             <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>

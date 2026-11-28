@@ -331,38 +331,9 @@ class VehicleSeeder extends Seeder
                 ]
             );
 
-            // Prefer real photographic images (.jpg) if available, otherwise fallback to generated SVG
-            $primaryFilename = File::exists($imageDir.'/'."{$data['slug']}-exterior.jpg")
-                ? "{$data['slug']}-exterior.jpg"
-                : "{$data['slug']}-exterior.svg";
-
-            $interiorFilename = File::exists($imageDir.'/'."{$data['slug']}-cockpit.jpg")
-                ? "{$data['slug']}-cockpit.jpg"
-                : "{$data['slug']}-cockpit.svg";
-
-            if (! File::exists($imageDir.'/'.$primaryFilename)) {
-                $this->generateVehicleSvg(
-                    filePath: $imageDir.'/'.$primaryFilename,
-                    title: $data['name'],
-                    variant: $data['variant'],
-                    category: $data['category'],
-                    bodyColor: $data['color'],
-                    accentColor: $data['accent'],
-                    viewType: 'exterior'
-                );
-            }
-
-            if (! File::exists($imageDir.'/'.$interiorFilename)) {
-                $this->generateVehicleSvg(
-                    filePath: $imageDir.'/'.$interiorFilename,
-                    title: $data['name'],
-                    variant: 'Interior Cockpit & Comfort',
-                    category: $data['category'],
-                    bodyColor: '#0f172a',
-                    accentColor: $data['accent'],
-                    viewType: 'interior'
-                );
-            }
+            // Always use real photographic images (.jpg)
+            $primaryFilename = "{$data['slug']}-exterior.jpg";
+            $interiorFilename = "{$data['slug']}-cockpit.jpg";
 
             // Attach images
             VehicleImage::updateOrCreate(

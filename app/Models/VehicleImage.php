@@ -43,18 +43,28 @@ class VehicleImage extends Model
         return Attribute::make(
             get: function () {
                 if (empty($this->image_path)) {
-                    return asset('images/placeholder-car.svg');
+                    return asset('images/placeholder-car.jpg');
                 }
 
-                if (str_starts_with($this->image_path, 'http://') || str_starts_with($this->image_path, 'https://')) {
-                    return $this->image_path;
+                $path = $this->image_path;
+
+                // Always prefer real photographic images (.jpg) over vector illustrations (.svg)
+                if (str_ends_with(strtolower($path), '.svg')) {
+                    $jpgCandidate = preg_replace('/\.svg$/i', '.jpg', $path);
+                    if (file_exists(public_path($jpgCandidate))) {
+                        $path = $jpgCandidate;
+                    }
                 }
 
-                if (str_starts_with($this->image_path, 'images/')) {
-                    return asset($this->image_path);
+                if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+                    return $path;
                 }
 
-                return Storage::url($this->image_path);
+                if (str_starts_with($path, 'images/')) {
+                    return asset($path);
+                }
+
+                return Storage::url($path);
             }
         );
     }

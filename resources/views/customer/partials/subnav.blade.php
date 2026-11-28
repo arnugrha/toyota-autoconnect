@@ -4,7 +4,7 @@
         <!-- Top Row: Customer Info & Quick Action -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-5">
             <div class="flex items-center gap-3.5">
-                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-red-600 to-red-700 text-white font-extrabold text-base shadow-sm ring-4 ring-red-50 flex-shrink-0">
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-600 bg-gradient-to-br from-red-600 to-red-700 text-white font-extrabold text-base shadow-sm ring-4 ring-red-50 flex-shrink-0" style="background-color: #dc2626;">
                     {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
                 </div>
                 <div>

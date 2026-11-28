@@ -109,6 +109,10 @@ class AuthController extends Controller
 
             $request->session()->regenerate();
 
+            if ($user->hasRole('Owner')) {
+                return redirect()->intended(route('admin.owner.revenue'));
+            }
+
             return redirect()->intended(route('admin.dashboard'));
         }
 
@@ -238,9 +242,11 @@ class AuthController extends Controller
      */
     protected function redirectBasedOnRole(User $user, bool $useIntended = true): RedirectResponse
     {
-        $destination = $user->hasRole('Customer')
-            ? route('customer.dashboard')
-            : route('admin.dashboard');
+        $destination = match (true) {
+            $user->hasRole('Customer') => route('customer.dashboard'),
+            $user->hasRole('Owner') => route('admin.owner.revenue'),
+            default => route('admin.dashboard'),
+        };
 
         return $useIntended ? redirect()->intended($destination) : redirect($destination);
     }

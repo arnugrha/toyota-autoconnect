@@ -22,7 +22,7 @@ class VehicleImageFactory extends Factory
     {
         return [
             'vehicle_id' => Vehicle::factory(),
-            'image_path' => 'images/placeholder-car.svg',
+            'image_path' => 'images/placeholder-car.jpg',
             'alt_text' => 'Toyota Vehicle Image',
             'sort_order' => 1,
             'is_primary' => true,

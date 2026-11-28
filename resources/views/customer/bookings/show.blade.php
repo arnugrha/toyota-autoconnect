@@ -156,7 +156,7 @@
                     @endif
                 </div>
             @elseif (!in_array($booking->status, ['cancelled', 'rejected']))
-                <div class="rounded-xl bg-gradient-to-r from-red-600 to-rose-700 text-white p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+                <div class="rounded-xl bg-red-600 bg-gradient-to-r from-red-600 to-rose-700 text-white p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm" style="background-color: #dc2626;">
                     <div class="space-y-1">
                         <div class="flex items-center gap-2">
                             <span class="rounded bg-white/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">

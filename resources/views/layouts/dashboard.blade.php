@@ -57,19 +57,111 @@
             <!-- Sidebar Navigation Links -->
             <div class="flex-1 overflow-y-auto px-3 py-4 space-y-6">
 
-                <!-- Main Section -->
-                <div>
-                    <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Utama</p>
-                    <nav class="space-y-1">
-                        <a href="{{ route('dashboard') }}"
-                           class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('dashboard') || request()->routeIs('admin.dashboard') ? 'bg-red-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
-                            </svg>
-                            <span>Ringkasan Dashboard</span>
-                        </a>
-                    </nav>
-                </div>
+                @if(auth()->user()->hasRole('Owner'))
+                    <!-- ============================================== -->
+                    <!-- KHUSUS ROLE OWNER (EKSEKUTIF / KOMISARIS)     -->
+                    <!-- HANYA MENAMPILKAN MENU PENDAPATAN & BISNIS     -->
+                    <!-- ============================================== -->
+                    <div>
+                        <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Portal Finansial</p>
+                        <nav class="space-y-1">
+                            <a href="{{ route('admin.owner.revenue') }}"
+                               class="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.owner.revenue') || request()->routeIs('dashboard') || request()->routeIs('admin.dashboard') ? 'bg-red-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <div class="flex items-center gap-2.5">
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                    </svg>
+                                    <span>Pendapatan &amp; Laba</span>
+                                </div>
+                                <span class="text-[9px] font-bold px-1.5 py-0.2 rounded {{ request()->routeIs('admin.owner.revenue') ? 'bg-red-800 text-white' : 'bg-slate-800 text-emerald-400' }}">Omzet</span>
+                            </a>
+
+                            <a href="{{ route('admin.analytics.dashboard') }}"
+                               class="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.analytics.dashboard') ? 'bg-red-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <div class="flex items-center gap-2.5">
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z" />
+                                    </svg>
+                                    <span>Dashboard Eksekutif</span>
+                                </div>
+                                <span class="text-[9px] font-bold px-1.5 py-0.2 rounded {{ request()->routeIs('admin.analytics.dashboard') ? 'bg-red-800 text-white' : 'bg-slate-800 text-red-400' }}">BI</span>
+                            </a>
+                        </nav>
+                    </div>
+
+                    <div>
+                        <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Kinerja Bisnis &amp; Cabang</p>
+                        <nav class="space-y-1">
+                            <a href="{{ route('admin.analytics.sales') }}"
+                               class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.analytics.sales') ? 'bg-red-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
+                                </svg>
+                                <span>Analisis Penjualan Unit</span>
+                            </a>
+
+                            <a href="{{ route('admin.analytics.dealers') }}"
+                               class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.analytics.dealers') ? 'bg-red-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5" />
+                                </svg>
+                                <span>Komparasi Omzet Cabang</span>
+                            </a>
+
+                            <a href="{{ route('admin.analytics.payments') }}"
+                               class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.analytics.payments') ? 'bg-red-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15A2.25 2.25 0 0 0 2.25 6.75v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
+                                </svg>
+                                <span>Arus Kas Pembayaran</span>
+                            </a>
+
+                            <a href="{{ route('admin.reports.index', ['type' => 'revenue']) }}"
+                               class="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.reports.*') ? 'bg-red-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <div class="flex items-center gap-2.5">
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                                    </svg>
+                                    <span>Laporan Keuangan &amp; Omzet</span>
+                                </div>
+                                <span class="text-[9px] font-bold px-1.5 py-0.2 rounded {{ request()->routeIs('admin.reports.*') ? 'bg-red-800 text-white' : 'bg-slate-800 text-emerald-400' }}">Ekspor</span>
+                            </a>
+                        </nav>
+                    </div>
+
+                    <div>
+                        <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Akses Cepat</p>
+                        <nav class="space-y-1">
+                            <a href="{{ route('home') }}" target="_blank"
+                               class="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                                <div class="flex items-center gap-2.5">
+                                    <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                    </svg>
+                                    <span>Lihat Website Publik</span>
+                                </div>
+                                <svg class="h-3 w-3 text-slate-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                                </svg>
+                            </a>
+                        </nav>
+                    </div>
+                @else
+                    <!-- Operasional Staff & Admin Standar -->
+                    <!-- Main Section -->
+                    <div>
+                        <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Utama</p>
+                        <nav class="space-y-1">
+                            <a href="{{ route('dashboard') }}"
+                               class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('dashboard') || request()->routeIs('admin.dashboard') ? 'bg-red-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
+                                </svg>
+                                <span>Ringkasan Dashboard</span>
+                            </a>
+                        </nav>
+                    </div>
 
                 <!-- Admin Section (Only for Super Admin / users.view) -->
                 @can('users.view')
@@ -225,9 +317,22 @@
                                         </svg>
                                         <span>Stok &amp; Inventory</span>
                                     </div>
-                                    <span class="text-[9px] font-bold px-1.5 py-0.2 rounded {{ request()->routeIs('admin.inventory.*') ? 'bg-red-800 text-white' : 'bg-slate-800 text-emerald-400' }}">Cabang</span>
+                                    <span class="text-[9px] font-bold px-1.5 py-0.2 rounded {{ request()->routeIs('admin.inventory.*') ? 'bg-red-800 text-white' : 'bg-slate-800 text-emerald-400' }}">Mobil</span>
                                 </a>
                             @endcan
+
+                            @if(auth()->user()->hasRole(['Super Admin', 'Dealer Manager', 'Inventory Officer', 'Service Advisor']) || auth()->user()->can('spare-parts.view'))
+                                <a href="{{ route('admin.spare-parts.index') }}"
+                                   class="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.spare-parts.*') ? 'bg-red-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                    <div class="flex items-center gap-2.5">
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.07a4.5 4.5 0 0 0 4.486-6.32l-3.27 3.27-2.828-2.828 3.27-3.27a4.5 4.5 0 0 0-6.32 4.486c.118.58.094 1.193-.07 1.743" />
+                                        </svg>
+                                        <span>Stok Sparepart</span>
+                                    </div>
+                                    <span class="text-[9px] font-bold px-1.5 py-0.2 rounded {{ request()->routeIs('admin.spare-parts.*') ? 'bg-red-800 text-white' : 'bg-slate-800 text-sky-400' }}">Suku Cadang</span>
+                                </a>
+                            @endif
 
 
 
@@ -343,7 +448,7 @@
                                 </a>
                             @endcan
 
-                            @can('spare-parts.view')
+                            @if(auth()->user()->hasRole(['Super Admin', 'Dealer Manager', 'Inventory Officer', 'Service Advisor']) || auth()->user()->can('spare-parts.view'))
                                 <a href="{{ route('admin.spare-parts.index') }}"
                                    class="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.spare-parts.*') ? 'bg-red-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
                                     <div class="flex items-center gap-2.5">
@@ -365,7 +470,7 @@
                                     </div>
                                     <span class="text-[9px] font-bold px-1.5 py-0.2 rounded {{ request()->routeIs('admin.spare-part-procurements.*') ? 'bg-red-800 text-white' : 'bg-slate-800 text-emerald-400' }}">+Stok</span>
                                 </a>
-                            @endcan
+                            @endif
 
 
                         </nav>
@@ -550,6 +655,7 @@
                         </a>
                     </nav>
                 </div>
+                @endif
             </div>
 
             <!-- Sidebar User Quick Info & Logout -->

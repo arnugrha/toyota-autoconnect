@@ -278,8 +278,6 @@ class RoleAndPermissionSeeder extends Seeder
                 'payments.view',
                 'sales.view',
                 'vehicles.view',
-                'inventory.view',
-                'spare-parts.view',
                 'profile.view',
                 'profile.update',
             ],
